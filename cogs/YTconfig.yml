@@ -1,0 +1,22 @@
+config:
+    connection:
+        Google API key:  # YouTube v3 API Key
+        # Discord bot token: # Discord bot token
+    main:
+        Ping Every x Minutes: 1 # 5-15 minutes should be ok, anything lower not recommended, because the API traffic will be used up very quickly otherwise.
+    Discord Channel:
+        0:
+            channelID: 750491737524404224 # Discord channel ID
+            New video: "¡HEY! @everyone, **{0}** Su adicto a la coca... **AL GTA** favorito acaba de subir un video! Corre a verlo :D" # Message that appears when a YouTuber has uploaded a new video
+            # Livestream: ":red_circle: **{0} IS LIVESTREAMING NOW!** :red_circle:" # Message that appears when a YouTuber is livestreaming
+            # My server content-sharing
+
+    YouTubers:
+        0:
+            name: Gtadictos21 # Name that will be displayed in discord, mentions can be used with <@DiscordUserID>
+            channelID: UCzEAjCyLmo_ZSlvx0ZypyIw # YouTube Channel ID
+
+        # 0:
+        #     name: Galo
+        #     channelID: UCGTwiWDuVMUDqT1ERrw6ahQ
+        #     # Some name
