@@ -1,5 +1,5 @@
 #TODO:
-#   Cambiar el channelid de YTconfig.yml, poner logchannel. Cambiar emojis
+#   Por alguna razon ignorelist no funca en el servidor del club pero en el servidor de prueba funciona perfectamente bien.
 #	musica, buscar y arreglar bugs
 
 
@@ -11,17 +11,23 @@ from discord.ext import commands
 import discord
 from dotenv import load_dotenv
 
+# Cargamos el .env con los tokens
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+# Ponemos todos los intents de dicord (Porque los necesitamos)
 intents = discord.Intents.all()
+# Configuramos la instancia del bot
 bot = commands.Bot(command_prefix='!', intents=intents)
+# Sacamos el comando de help predeterminado (Porque es malisimo)
 bot.remove_command('help')
 
+# Una manera primitiva de sacar el logchannel (OBSOLETA)
 
 # logval = {"logchannel":0} #779861708339937330
 # ignoreval = {"ignorelist":[]}
-
 # logchannel = logval.get(logchannel)
+
+# Id mio y de Gtadictos21 (Para configurar el bot y demás)
 global admin_ids
 admin_ids = [503739646895718401, 388924384016072706]
 
@@ -29,12 +35,18 @@ admin_ids = [503739646895718401, 388924384016072706]
 @bot.event
 async def on_ready():
     print(f'{bot.user.name} se ha conectado')
+
+    # Cambia la actividad del bot a "viendo a Gtadictos21", url no funciona por limitación de Discord
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="a Gtadictos 21 | Usa !ayuda", url="https://youtube.com/c/gtadictos21"))
 
 
 @bot.event
 async def on_disconnect():
+    # Esto literalmente no tiene uso.
     print(f"{bot.user.name} se ha desconectado")
+
+
+# Primera instacia de un errorhandler (OBSOLETO), nuevo errorhandler en errorhandler.py
 
 # @bot.event
 # async def on_command_error(ctx, error):
@@ -49,6 +61,8 @@ async def on_disconnect():
     # if isinstance(error, discord.ext.commands.errors.UserNotFound):
     # 	await ctx.send("Usuario no encontrado")
     # print(error)
+
+# Primera instancia de lo que se convirtió reacciones.py
 
 # @bot.event
 # async def on_ready():
@@ -72,6 +86,7 @@ async def on_disconnect():
 # 		Role = discord.utils.get(user.guild.roles, name="test")
 # 		await user.remove_roles(Role)
 
+# Comando de spam para probar el comando "!purge", envía la cantidad de mensajes especificados
 
 ################# COMANDO DE PRUEBA
 # @bot.command(name="spam")
@@ -92,23 +107,29 @@ async def on_disconnect():
 @bot.command()
 async def load(ctx, extension):
     if ctx.author.id not in admin_ids:
+        # Si el que pidé el comando no está en la lista de admins lo ignoramos
         return
+    # Carga la extensión especificada
     bot.load_extension(f"cogs.{extension}")
     await ctx.send(f"cogs.{extension} ha sido cargada")
 
 @bot.command()
 async def unload(ctx, extension):
     if ctx.author.id not in admin_ids:
+        # Si el que pidé el comando no está en la lista de admins lo ignoramos
         return
+    # Descarga/apaga/deshabilita la extensión especidicada
     bot.unload_extension(f"cogs.{extension}")
     await ctx.send(f"cogs.{extension} ha sido descargada")
 
 @bot.command()
 async def reload(ctx,extension):
     if ctx.author.id not in admin_ids:
+        # Si el que pidé el comando no está en la lista de admins lo ignoramos
         return
 
     if extension == "all":
+        # Si se nos piden todas las extendiones (all) descargamos y cargamos todas las extensiones disponibles
         for filename in os.listdir('./cogs'):
             if filename.endswith('.py'):
                 bot.unload_extension(f"cogs.{filename[:-3]}")
@@ -119,10 +140,13 @@ async def reload(ctx,extension):
 
         await ctx.send("Recargadas todas las extensiones")
         return
+    # Descargamos y cargamos la extension especifica
 
     bot.unload_extension(f"cogs.{extension}")
     bot.load_extension(f"cogs.{extension}")
     await ctx.send(f"cogs.{extension} ha sido recargada")
+
+# DEBUG: Imprime todos los emojis customizados de la guild en la consola. Especialmente útil para los emojis animados si no tenes discord nitro
 
 # @bot.command()
 # async def emojis(ctx):
@@ -132,8 +156,10 @@ async def reload(ctx,extension):
 #         print (f"{i.name}   {i.id}")
 #         print("-----")
 
+# Cargamos todos los archivos adentro de cogs/ como extensiones
 for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
         bot.load_extension(f"cogs.{filename[:-3]}")
 
+# Corremos el bot
 bot.run(TOKEN)
