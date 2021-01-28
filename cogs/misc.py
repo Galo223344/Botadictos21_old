@@ -1,4 +1,7 @@
 import discord
+import asyncio
+import re
+from datetime import datetime, timedelta
 from discord.ext import commands
 from cogs.logs import logchannel
 
@@ -75,6 +78,8 @@ class Misc(commands.Cog):
             embed.add_field(name="!Botinfo", value="Te envia información acerca del bot", inline=False)
             embed.add_field(name="!Userinfo", value="Te da información de vos mismo o de alguien más!", inline=False)
             embed.add_field(name="!Sugerencia", value="Usar en privado. Te permite enviar una sugerencia!", inline=False)
+            embed.add_field(name="!Avatar", value="Te envía una foto de tu avatar actual", inline=False)
+            embed.add_field(name="!Remindme/Recuerdame", value="(Uso: !recuerdame 1m/1h/1d cosa a recordar).\nTe envía un mensaje privado después del tiempo especificado con el contenido a recordar", inline=False)
             await ctx.author.send(embed=embed)
 
             return
@@ -130,7 +135,9 @@ class Misc(commands.Cog):
         embed=discord.Embed(color=0x8080ff)
         embed.add_field(name=f"{ctx.author} ha sugerido lo siguiente", value=f"\"{suge}\"", inline=True)
         embed.set_thumbnail(url=ctx.author.avatar_url)
-        await channel.send(embed=embed)
+        mnsj = await channel.send(embed=embed)
+        await mnsj.add_reaction("✅")
+        await mnsj.add_reaction("❌")
         await ctx.send("Sugerencia enviada!")
 
     # userinfo
@@ -172,6 +179,94 @@ class Misc(commands.Cog):
 
         await ctx.send(embed=embed)
 
+    #Avatar
+
+    @commands.command(name="avatar", aliases=["Avatar"])
+    async def avatar(self, ctx, member: discord.Member=None):
+        if member == None:
+            member = ctx.author
+
+        await ctx.send(member.avatar_url)
+
+
+
+    # RemindMe
+
+    @commands.command(name="Remindme", aliases=["remindme","RemindMe","remindMe","recordarme","Recordarme"])
+    async def reminder(self,ctx, tiempo=None, *, recordatorio=None):
+
+        if tiempo == None:
+            await ctx.send("Porfavor especifica un tiempo de la siguiente manera: `1m 1h 1d`")
+            return
+        if recordatorio == None:
+            await ctx.send("Especifica un recordatorio!")
+            return
+
+        tiempo = tiempo.replace(" ","")
+
+        listtiempo = re.findall('\d+|\D+', tiempo)
+
+        if 'm' in listtiempo:
+            indexm = listtiempo.index("m") -1
+            # print("encontrada m")
+        else:
+            indexm = None
+
+        if 'h' in listtiempo:
+            indexh = listtiempo.index("h") - 1
+            # print("encontrada h")
+        else:
+            indexh = None
+
+        if 'd' in listtiempo:
+            indexd = listtiempo.index("d") - 1
+            # print("encontrada d")
+        else:
+            indexd = None
+
+        ##########
+
+        if indexm  is not None:
+            minutos = int(listtiempo[indexm])
+        else:
+            minutos = 0
+
+        if indexh is not None:
+            horas = int(listtiempo[indexh])
+        else:
+            horas = 0
+
+        if indexd is not None:
+            dias = int(listtiempo[indexd])
+        else:
+            dias = 0
+
+
+        if minutos <= 0 and horas <= 0 and dias <= 0:
+            await ctx.send("Tiempo invalido")
+            return
+
+        tiemporecordatorio = datetime.now().replace(microsecond=0,second=0) + timedelta(minutes=minutos,hours=horas,days=dias)
+        pedido = datetime.now().replace(microsecond=0,second=0)
+
+        pedido_formateado = pedido.strftime("%d/%m/%Y %H:%M")
+        tiempo_formateado = tiemporecordatorio.strftime("%d/%m/%Y %H:%M")
+
+        await ctx.send(f"Entendido, te voy a hacer acordar que \"{str(recordatorio)}\" el {tiempo_formateado} por mensaje privado.")
+
+        minutos = minutos * 60
+        horas = horas * 3600
+        dias = dias * 86400
+
+        tiempodormir = minutos + horas + dias
+
+        await asyncio.sleep(tiempodormir)
+
+        embed=discord.Embed(title="Recordatorio!", color=0x008080)
+        embed.add_field(name="Hola! Te hablo para recordarte de lo siguiente:", value=f"\"{recordatorio}\"", inline=False)
+        embed.set_footer(text=f"Recordatorio pedido el {pedido_formateado} en #{ctx.channel.name}")
+
+        await ctx.author.send("Recordatorio!", embed=embed)
 
     @commands.command(name="reglas")
     @commands.has_permissions(manage_guild = True)
