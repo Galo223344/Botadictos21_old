@@ -10,3 +10,5 @@ Ranking cog sacado de este [thread de Stackoverflow](https://stackoverflow.com/q
 
 
 Sos libre de copiar, modificar y hacer lo que quieras con este código.
+
+Si querés usar este bot en tu propio server tenés que cambiar los admin_ids en Botdictos21.py por los ids de las personas que querés que controlen el bot, también tenés que cambiar los emojis customizados por tuyos o unos no customizados, tambien tenés que agregar tu propia clave API de youtube n YTconfig.yml, las instrucciónes para conseguír esta clave están en la repo original, alternativamente podés simplemente borrar todo lo relacionado a Youtube.
