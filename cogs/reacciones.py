@@ -208,15 +208,19 @@ class Reactions(commands.Cog):
         while len(ganadores) < cant_ganadores:
             eleccion = random.choice(dict_gv[message.id])
             if eleccion not in ganadores:
+                if eleccion == None:
+                    continue
                 try:
-                    eleccionn = ctx.guild.get_member(eleccion)
+                    eleccionn = ctx.guild.get_member(int(eleccion))
+                    if eleccionn == None:
+                        continue
                     ganadores.append(eleccion)
                 except:
                     continue
 
 
         for i in ganadores:
-            ganador = ctx.guild.get_member(i)
+            ganador = ctx.guild.get_member(int(i))
             await ctx.send(f"Felicidades {ganador.mention} por ganar el sorteo \"{nombre}\"! {ctx.message.author.mention} se va a comunicar con vos brevemente")
             await ganador.send(f"**Felicidades, {ganador.mention}! 🎉 Acabas de ganar el sorteo \"{nombre}\". En las proximas horas, Gtadictos se va a comunicar con vos para entregarte el premio!**")
 
@@ -227,6 +231,36 @@ class Reactions(commands.Cog):
         lchannel = self.bot.get_channel(logchannel)
         embed=discord.Embed(title=f"El sorteo {nombre} finalizó correctamente", description="Asegurense de contactar a los ganadores", color=0xff6600)
         await lchannel.send(embed=embed)
+
+    @commands.command(name="resorteo")
+    @commands.has_permissions(manage_guild = True)
+    async def resorteo(self,ctx,m_id):
+        msg = await ctx.fetch_message(int(m_id))
+        usuarios = []
+        users = set()
+
+        for reaction in msg.reactions:
+            async for user in reaction.users():
+                usuarios.append(user)
+
+        print(usuarios)
+
+        while True:
+            eleccion = random.choice(usuarios)
+            print(eleccion)
+            eleccion = ctx.guild.get_member(int(eleccion.id))
+            print(eleccion)
+
+
+            if eleccion != None:
+                if not eleccion.bot:
+                    break
+
+
+        await ctx.send(f"RESORTEO.\nEl ganador del resorteo es \"{eleccion.mention}\"")
+
+
+
 
 
     # @commands.Cog.listener()
