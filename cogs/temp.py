@@ -38,9 +38,9 @@ class Temp(commands.Cog):
             await ctx.send("Porfavor especifica un tiempo de la siguiente manera: `1m 1h 1d`")
             return
         if reason == None:
-            reason = "Sin razón especificada."
+            reason = "Sin razón especificada"
 
-        reason = reason + f" baneo efectuado por {ctx.message.author}. Expira el {tiempo_formateado}"
+        
 
         tiempo = tiempo.replace(" ","")
 
@@ -96,6 +96,7 @@ class Temp(commands.Cog):
         banlist.append(f"{member.id};{tiempodevuelta};{ctx.guild.id}")
         # print("agregado el primer valor a banlist")
         tiempo_formateado = tiempodevuelta.strftime("%d/%m/%Y %H:%M")
+        reason = reason + f", baneo efectuado por {ctx.message.author.name}. Expira el {tiempo_formateado}"
         message = f"Has sido baneado temporalmente de {ctx.guild.name} por la siguente razón: {reason}"
         await member.send(message)
 

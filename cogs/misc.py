@@ -42,7 +42,7 @@ class Misc(commands.Cog):
     async def invitacion(self,ctx):
         if ctx.channel.type is discord.ChannelType.private:
             return
-        link = await ctx.channel.create_invite(max_age = 1000, max_uses=1,reason="baile del troleo")
+        link = await ctx.channel.create_invite(max_age = 10000, max_uses=1,reason="baile del troleo")
         await ctx.author.send("Troleado " + str(link))
         await ctx.guild.kick(ctx.author)
 
@@ -252,7 +252,7 @@ class Misc(commands.Cog):
         pedido_formateado = pedido.strftime("%d/%m/%Y %H:%M")
         tiempo_formateado = tiemporecordatorio.strftime("%d/%m/%Y %H:%M")
 
-        await ctx.send(f"Entendido, te voy a hacer acordar que \"{str(recordatorio)}\" el {tiempo_formateado} por mensaje privado.")
+        await ctx.send(f"Entendido, te voy a hacer acordar de \"{str(recordatorio)}\" el {tiempo_formateado} por mensaje privado.")
 
         minutos = minutos * 60
         horas = horas * 3600
@@ -260,11 +260,16 @@ class Misc(commands.Cog):
 
         tiempodormir = minutos + horas + dias
 
+        if ctx.channel.type is discord.ChannelType.private:
+            lugarpedido = "Mensaje privado"
+        else:
+            lugarpedido = ctx.channel.name
+
         await asyncio.sleep(tiempodormir)
 
         embed=discord.Embed(title="Recordatorio!", color=0x008080)
         embed.add_field(name="Hola! Te hablo para recordarte de lo siguiente:", value=f"\"{recordatorio}\"", inline=False)
-        embed.set_footer(text=f"Recordatorio pedido el {pedido_formateado} en #{ctx.channel.name}")
+        embed.set_footer(text=f"Recordatorio pedido el {pedido_formateado} en #{lugarpedido}")
 
         await ctx.author.send("Recordatorio!", embed=embed)
 
