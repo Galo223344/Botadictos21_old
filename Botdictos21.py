@@ -40,10 +40,10 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="a Gtadictos 21 | Usa !ayuda", url="https://youtube.com/c/gtadictos21"))
 
 
-@bot.event
-async def on_disconnect():
-    # Esto literalmente no tiene uso.
-    print(f"{bot.user.name} se ha desconectado")
+# @bot.event
+# async def on_disconnect():
+#     # Esto literalmente no tiene uso.
+#     print(f"{bot.user.name} se ha desconectado")
 
 
 # Primera instacia de un errorhandler (OBSOLETO), nuevo errorhandler en errorhandler.py
