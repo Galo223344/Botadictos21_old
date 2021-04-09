@@ -187,7 +187,7 @@ class Misc(commands.Cog):
 
     @commands.command(name='host', aliases=["Host","hosting","Hosting"])
     async def host(self,ctx):
-        await ctx.send("Powered by https://billing.SparkedHost.com/aff.php?aff=1125")
+        await ctx.send("Powered by https://billing.SparkedHost.com/aff.php?aff=1125 \n¿Querés tener tu propio servidor? ¡Usá el código (LoremIpsum) y obtené un 15\% de descuento!")
 
 
     @commands.command(name="reglas")
@@ -203,7 +203,7 @@ class Misc(commands.Cog):
         embed.add_field(name="#5", value="<a:Desaprobado:784983048508276787> **NO** spammear canales de YouTube/Twitch sin permiso!", inline=False)
         embed.add_field(name="#6", value="<a:Desaprobado:784983048508276787> **NO** se permite **comprar o vender NADA**, ya sea una bicicleta, un falcon o, un kilito de merca. ", inline=False)
         embed.add_field(name="#7", value="<a:Desaprobado:784983048508276787> **NO** se permite hacer flood, es decir, mensajes que puedan interrumpir una conversación o molestar como, por ejemplo, enviar demasiados mensajes en muy poco tiempo. ", inline=False)
-        embed.add_field(name="#8", value="<a:Aprobado:784983108663246908> **USAR** los canales correspondientes, si vas a mandar un meme, mándalo a #🤡memes, etc.", inline=False)
+        embed.add_field(name="#8", value="<a:Aprobado:784983108663246908> **USAR** los canales correspondientes, si vas a mandar un meme, mándalo a <#750496337916592199>, etc.", inline=False)
         embed.add_field(name="#9", value="<a:Desaprobado:784983048508276787> Al entrar a un chat de voz, **NO GRITES NI SATURES EL MICROFONO**.", inline=False)
         embed.add_field(name="#10", value="<a:Alerta:784982996225884200> **SI USAS CHEATS/SCRIPTS, TE REGALAMOS UN VACACIONES PERMANENTES A UGANDA**.", inline=False)
         embed.add_field(name="#11", value="<a:Aprobado:784983108663246908> Para conseguir el rango de <@&750492534857400321> tenes que hablar con un <@&750492134695764059> o en su defecto con un <@&750491866570686535> y sin problemas, te lo van a dar!", inline=False)
