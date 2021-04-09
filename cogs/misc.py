@@ -57,7 +57,7 @@ class Misc(commands.Cog):
         embed=discord.Embed(title="Haz click para ver el codigo fuente", url="https://github.com/Galo223344/Botdictos21/", description="", color=0x2cdca3)
         embed.add_field(name="Creado por", value="<@388924384016072706>", inline=True)
         embed.add_field(name="Para el servidor", value="**El Club de los 21\'s**", inline=True)
-        embed.add_field(name="Hosteado en", value="RackNerd.com", inline=True)
+        embed.add_field(name="Hosteado en", value="SparkedHost.us", inline=True)
         embed.set_thumbnail(url=self.bot.user.avatar_url)
         await ctx.send(embed=embed)
 
