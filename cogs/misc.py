@@ -185,6 +185,10 @@ class Misc(commands.Cog):
 
         await ctx.send(member.avatar_url)
 
+    @commands.command(name='host', aliases=["Host","hosting","Hosting"])
+    async def host(self,ctx):
+        await ctx.send("Powered by https://billing.SparkedHost.com/aff.php?aff=1125")
+
 
     @commands.command(name="reglas")
     @commands.has_permissions(manage_guild = True)
