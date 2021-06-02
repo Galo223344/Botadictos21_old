@@ -14,7 +14,7 @@ class Reminder(commands.Cog):
         print ("Reminder cog is ready")
 
 
-    @commands.command(name="Remindme", aliases=["remindme","RemindMe","remindMe","recordarme","Recordarme"])
+    @commands.command(name="Remindme", aliases=["remindme","RemindMe","remindMe","recordarme","Recordarme","recuerdame","Recuerdame"])
     async def reminder(self,ctx, tiempo=None, *, recordatorio=None):
 
         if tiempo == None:

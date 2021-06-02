@@ -120,7 +120,10 @@ class Temp(commands.Cog):
 
 
 
-
+    @commands.command(name="unasimpleprueba")
+    async def unasimpleprueba(self, ctx):
+    	await ctx.channel.send("Buenaaaass!  -el gaspi")
+    	print("print de prueba")
 
 
     @commands.has_permissions(manage_roles=True)
@@ -131,6 +134,8 @@ class Temp(commands.Cog):
             return
 
         Role = discord.utils.get(member.guild.roles, name="Silenciado")
+        role2 = discord.utils.get(member.guild.roles, name="La People👤")
+        
         if Role in member.roles:
             await ctx.send("El usuario ya está silenciado")
             return
@@ -206,7 +211,10 @@ class Temp(commands.Cog):
             for i in mutelist:
                 ofile.write(f"{i.strip()} \n")
             # print("terminado segundo for loop")
+
         await member.add_roles(Role)
+        await member.remove_roles(role2)
+
         await ctx.send(f"El usuario {member.name} ha sido muteado y será desmuteado el {tiempo_formateado}")
 
     @tasks.loop(minutes=1)
@@ -270,6 +278,7 @@ class Temp(commands.Cog):
                     # print("dect3")
 
                     Role = discord.utils.get(member.guild.roles, name="Silenciado")
+                    rolepeople = discord.utils.get(member.guild.roles, name="La People👤")
                     # print("dect4")
                     channel=self.bot.get_channel(logchannel)
                     # print("dect5")
@@ -278,7 +287,15 @@ class Temp(commands.Cog):
                         await channel.send(f"Error tempmute. El usuario {member.name} no está silenciado")
                         # print("dect5.2")
                         continue
+
+                    print("agregado rol la people")
+                    # print(rolepeople)
+                    await member.add_roles(rolepeople)
+
+                    print("Sacado rol silenciado")
+                    # print(Role)
                     await member.remove_roles(Role)
+
                     # print("dect6")
                     embed=discord.Embed(title="A expirado un tempmute. ", color=0x2bff00)
                     # print("dect7")

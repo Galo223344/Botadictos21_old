@@ -85,7 +85,7 @@ class Logs(commands.Cog):
 
         await channel.send(embed=embed)
 
-        asyncio.sleep(172800)
+        await asyncio.sleep(172800)
 
         Role = discord.utils.get(member.guild.roles, name="La People👤")
         if Role in member.roles:

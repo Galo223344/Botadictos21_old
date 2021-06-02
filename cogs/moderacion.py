@@ -21,7 +21,7 @@ class Moderacion(commands.Cog):
 
     @commands.command(name='ban', help='Banea a un miembro. Solo admins', aliases=["Ban"])
     @commands.has_permissions(ban_members=True)
-    async def ban (self, ctx, member:discord.User=None, *,reason =None):
+    async def ban (self, ctx, member:discord.Member=None, *,reason =None):
         if member == None or member == ctx.message.author:
             await ctx.channel.send("Usuario no valido.")
             return
@@ -31,7 +31,12 @@ class Moderacion(commands.Cog):
         reason = reason + f" Baneo efectuado por {ctx.message.author}"
 
         message = f"Has sido baneado de {ctx.guild.name} por la siguente razón: \"{reason}\""
-        await member.send(message)
+        
+        try:
+        	await member.send(message)
+        except:
+        	pass
+
         await ctx.guild.ban(member, reason=reason)
         await ctx.channel.send(f"{member} ha sido baneado!")
 
@@ -50,7 +55,7 @@ class Moderacion(commands.Cog):
 
     @commands.command(name='kick', help='kickea a un miembro. Solo admins', aliases=["Kick","expulsar","Expulsar"])
     @commands.has_permissions(kick_members=True)
-    async def kick (self, ctx, member:discord.User=None, *,reason=None):
+    async def kick (self, ctx, member:discord.Member=None, *,reason=None):
         if member == None or member == ctx.message.author:
             await ctx.channel.send("Usuario no valido.")
             return
@@ -58,7 +63,10 @@ class Moderacion(commands.Cog):
             reason = "Sin razón especificada."
         reason = reason + f" Kick efectuado por {ctx.message.author}"
         message = f"Has sido expulsado de {ctx.guild.name} por la siguente razón: {reason}"
-        await member.send(message)
+        try:
+        	await member.send(message)
+        except:
+        	pass
         await ctx.guild.kick(member, reason=reason)
         await ctx.channel.send(f"{member} ha sido expulsado!")
 
@@ -78,6 +86,7 @@ class Moderacion(commands.Cog):
     @commands.has_permissions(manage_roles=True)
     async def silenciar(self, ctx, member:discord.Member=None, *,reason=None):
         Role = discord.utils.get(member.guild.roles, name="Silenciado")
+        role2 = discord.utils.get(member.guild.roles, name="La People👤")
 
         if member == None or member == ctx.message.author:
             await ctx.channel.send("Usuario no valido")
@@ -91,12 +100,13 @@ class Moderacion(commands.Cog):
         Role = discord.utils.get(member.guild.roles, name="Silenciado")
         await member.add_roles(Role)
         await ctx.send("El usuario ha sido muteado")
+        await member.remove_roles(role2)
 
         channel = self.bot.get_channel(logchannel)
         embed=discord.Embed(title="Usuario silenciado", color=0xff0000)
         embed.add_field(name= "Usuario silenciado:" ,value=member.mention, inline=False)
         embed.add_field(name= "Silenciado por:" ,value=ctx.message.author.mention, inline=False)
-        channel.send(embed=embed)
+        await channel.send(embed=embed)
 
     @silenciar.error
     async def handler_ban(self, ctx,error):
@@ -118,14 +128,17 @@ class Moderacion(commands.Cog):
             return
 
         Role = discord.utils.get(member.guild.roles, name="Silenciado")
+        role2 = discord.utils.get(member.guild.roles, name="La People👤")
+
         await member.remove_roles(Role)
         await ctx.send("El usuario ha sido desmuteado")
+        await member.add_roles(role2)
 
         channel = self.bot.get_channel(logchannel)
         embed=discord.Embed(title="Usuario desmuteado", color=0x2bff00)
         embed.add_field(name= "Usuario desmuteado:" ,value=member.mention, inline=False)
         embed.add_field(name= "Desmuteado por:" ,value=ctx.message.author.mention, inline=False)
-        channel.send(embed=embed)
+        await channel.send(embed=embed)
 
     @reactivar.error
     async def handler_ban(self, ctx, error):

@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from cogs.logs import logchannel
+from unidecode import unidecode
 
 
 
@@ -23,6 +24,10 @@ class Misc(commands.Cog):
     async def youtube(self,ctx):
         await ctx.send("Acá está el link! https://www.youtube.com/c/gtadictos21")
 
+    @commands.command(name="status")
+    async def status(self,ctx):
+        await ctx.send("Status de los servidores en https://status.gtadictos21.com/")
+
     # Invitacion
 
     @commands.command(name='invitacion', help="Link de la invitacion para el server de Discord", aliases=["Invitacion","invitación","Invitación","invite","Invite","inv"])
@@ -31,7 +36,7 @@ class Misc(commands.Cog):
         #     await ctx.send("Comando no disponible en mensajes privados")
         #     return
         # link = await ctx.channel.create_invite(max_age = 300)
-        await ctx.send(f"Espero que invites a tus amigos ;) \n https://www.Gtadictos21.com/discord")
+        await ctx.send(f"Espero que invites a tus amigos ;) \n https://Gtadictos21.com/discord")
 
     # El baile del troleo
 
@@ -55,7 +60,8 @@ class Misc(commands.Cog):
     @commands.command(name="botinfo", help="Muestra información del bot", aliases=["Botinfo","BotInfo","infobot","Infobot"])
     async def botinfo(self,ctx):
         embed=discord.Embed(title="Haz click para ver el codigo fuente", url="https://github.com/Galo223344/Botdictos21/", description="", color=0x2cdca3)
-        embed.add_field(name="Creado por", value="<@388924384016072706>", inline=True)
+        embed.add_field(name="Botdictos por", value="<@388924384016072706>", inline=True)
+        embed.add_field(name="Musicadictos por", value="<@503739646895718401>", inline=True)
         embed.add_field(name="Para el servidor", value="**El Club de los 21\'s**", inline=True)
         embed.add_field(name="Hosteado en", value="SparkedHost.us", inline=True)
         embed.set_thumbnail(url=self.bot.user.avatar_url)
@@ -77,7 +83,8 @@ class Misc(commands.Cog):
             embed.add_field(name="!Sugerencia", value="Usar en privado. Te permite enviar una sugerencia!", inline=False)
             embed.add_field(name="!Avatar", value="Te envía una foto de tu avatar actual", inline=False)
             embed.add_field(name="!Remindme/Recuerdame", value="(Uso: !recuerdame 1m/1h/1d cosa a recordar).\nTe envía un mensaje privado después del tiempo especificado con el contenido a recordar", inline=False)
-            await ctx.author.send(embed=embed)
+            embed.add_field(name="!Reaccion/React [palabras]", value="Reacciona al mensaje que respondiste con las palabras que mandaste\nNo usar Ñ, mensajes de más de 15 cáracteres o letras repetidas.", inline=False)
+            await ctx.send(embed=embed)
 
             return
 
@@ -101,6 +108,24 @@ class Misc(commands.Cog):
             embed.add_field(name="!ignore", value="Los logs ignoraran este canal", inline=False)
             embed.add_field(name="!ignorelist", value="envía una lista de todos los canales en la ignorelist", inline=False)
             embed.add_field(name="!sugchannel", value="Se envian las sugerencias a este canal", inline=False)
+            embed.add_field(name="!mc comando \"comando\"", value="Envia comando al server de minecraft", inline=False)
+            embed.add_field(name="!mc start", value="Inicia el server de minecraft", inline=False)
+            embed.add_field(name="!mc restart", value="Reinicia el server de minecraft", inline=False)
+            embed.add_field(name="!mc stop", value="Para el server de minecraft", inline=False)
+
+            await ctx.send(embed=embed)
+
+        elif argum.lower() == "música" or argum.lower() == "musica" or argum.lower() == "music":
+            embed=discord.Embed(title="Ayuda de música", description="Comandos disponibles:", color=0xC70039)
+            embed.add_field(name="!Conectar", value="Conecta Musicadictos a tu canal actual", inline=False)
+            embed.add_field(name="!Desconectar", value="Desconecta Musicadictos de tu canal actual", inline=False)
+            embed.add_field(name="!Play [Link o búsqueda de YT]", value="Reproduce la canción/lista especificada", inline=False)
+            embed.add_field(name="!Pausa", value="Pausa la canción actual", inline=False)
+            embed.add_field(name="!Stop", value="Para la música", inline=False)
+            embed.add_field(name="!Skip", value="Saltea la canción actual", inline=False)
+            embed.add_field(name="!Anterior", value="Reproduce la canción anterior", inline=False)
+            embed.add_field(name="!Repetir", value="Activa/desactiva el modo repetición", inline=False)
+            embed.add_field(name="!Cola", value="Te muestra la cola de música actual", inline=False)
             await ctx.send(embed=embed)
 
 
@@ -187,7 +212,15 @@ class Misc(commands.Cog):
 
     @commands.command(name='host', aliases=["Host","hosting","Hosting"])
     async def host(self,ctx):
-        await ctx.send("Powered by https://billing.SparkedHost.com/aff.php?aff=1125 \n¿Querés tener tu propio servidor? ¡Usá el código (LoremIpsum) y obtené un 15\% de descuento!")
+        await ctx.send("Powered by https://billing.SparkedHost.com/aff.php?aff=1125 \n¿Querés tener tu propio servidor? ¡Usá el código \"Gtadictos21\" y obtené un 15\% de descuento!")
+
+    @commands.command(name="eco", aliases=["echo","Echo","Eco"])
+    @commands.has_permissions(kick_members = True)
+    async def eco(self,ctx,canal:discord.TextChannel,*,mensaje:str):
+        embed=discord.Embed(title=mensaje,value="",colour=ctx.author.color)
+        await canal.send(embed=embed)
+
+
 
 
     @commands.command(name="reglas")
@@ -216,33 +249,87 @@ class Misc(commands.Cog):
         embed.add_field(name="----------------", value="<a:Aprobado:784983108663246908> Recordá que nosotros nos guiamos por los [términos y condiciones de discord](https://www.discord.com/terms) y por las [directivas de la comunidad](https://www.discord.com/guidelines).", inline=False)
         welcome_message = await ctx.send(embed=embed)
 
-    @commands.command(name="minecraft", aliases=["MC","Minecraft","mc"])
-    async def minecra(self,ctx):
-        await ctx.channel.send("Te envié los datos al privado! (Asegurate de tener los mensajes privados activados)")
-        await ctx.author.send("""
-**ATENCIÓN!**
-Este servidor es un servidor survival semi-anarcáico.
-
-Reglas:
-    - No usar cheats
-    - No ser racista/homofobico
-
-El servidor es un servidor no-premium vanilla. Con los únicos plugins siendo AuthMe, Anticheat, rangos simples, GeyserMC y Essentials (tpa y homes).
-Ante cualquier duda, o reporte contactar a los admin de discord.
-
-Si te parece bien todo esto, acá está la IP:
-```
-IP: gtadictos21.com 
-IP Bedrock: mc.gtadictos21.com
-Puerto: 25603
-```
-
-El servidor se puede jugar desde bedrock (Minecraft PE, PS4, PS5, XBOX One XBOXSX) con la última versión.
-En java se puede jugar desde la 1.9.x hasta la 1.16.x pero es **muy** recomendable usar la última versión
-
-""")
+    @commands.command(name="msginfo")
+    @commands.has_permissions(manage_guild = True)
+    async def msginfo(self,ctx):
+        await ctx.channel.send(f"Contexto: \"{ctx}\"\n\nContexto.message: \"{ctx.message}\"\n\nContenido\"{ctx.message.content}\"\n\n\"reply? {ctx.message.reference}\"")
 
 
+    @commands.command(name="reaccion",aliases=["Reaccion","react","React","Reacciones","reacciones"])
+    async def msginfo(self,ctx,*, mensaje:str=None):
+        if mensaje == None:
+            await (await ctx.send("Enviá un mensaje!")).delete(delay=10)
+            return
+        if ctx.message.reference == None:
+            await (await ctx.send("Respondé al mensaje que querés que reaccione!")).delete(delay=10)
+            return
+
+        mensaje = mensaje.lower()
+        mensaje = mensaje.replace(" ","")
+        if len(mensaje) > 15:
+            await (await ctx.send("El mensaje no puede tener más de 15 carácteres!")).delete(delay=10)
+            return
+        mensaje = unidecode(mensaje)
+
+        await (ctx.message).delete(delay=3)
+
+        letras_dict = {
+        'a': "🇦",
+        'b': "🇧",
+        'c': "🇨",
+        'd': "🇩",
+        'e': "🇪",
+        'f': "🇫",
+        'g': "🇬",
+        'h': "🇭",
+        'i': "🇮",
+        'j': "🇯",
+        'k': "🇰",
+        'l': "🇱",
+        'm': "🇲",
+        'n': "🇳",
+        'o': "🇴",
+        'p': "🇵",
+        'q': "🇶",
+        'r': "🇷",
+        's': "🇸",
+        't': "🇹",
+        'u': "🇺",
+        'v': "🇻",
+        'w': "🇼",
+        'x': "🇽",
+        'y': "🇾",
+        'z': "🇿",
+        '0': "0️⃣",
+        '1': "1️⃣",
+        '2': "2️⃣",
+        '3': "3️⃣",
+        '4': "4️⃣",
+        '5': "5️⃣",
+        '6': "6️⃣",
+        '7': "7️⃣",
+        '8': "8️⃣",
+        '9': "9️⃣",
+        }
+
+        repetidas = set(i for i in mensaje if mensaje.count(i)>1)
+        lista = []
+        for i in repetidas:
+            lista.append(i)
+        if len(repetidas) >= 1:
+            await (await ctx.send(f"El mensaje no puede contener letras repetidas!\nLetras repetidas:{lista}")).delete(delay=10)
+            return
+
+        msg = await ctx.channel.fetch_message(ctx.message.reference.message_id)
+
+        for letra in mensaje:
+            if letra == "ñ":
+                continue
+            await msg.add_reaction(letras_dict[letra])
+
+
+
+    
 
 def setup(bot):
     bot.add_cog(Misc(bot))
