@@ -25,6 +25,7 @@ class ranks(commands.Cog):
         embed.add_field(name='**#3**', value=leaderboard[2], inline=False)
         embed.add_field(name='**#4**', value=leaderboard[3], inline=False)
         embed.add_field(name='**#5**', value=leaderboard[4], inline=False)
+        embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
 
 def get_top_experience(data):
