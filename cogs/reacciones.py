@@ -156,13 +156,13 @@ class Reactions(commands.Cog):
 
         tadaa = self.bot.get_emoji(784983720226193428)
 
-        embed=discord.Embed(title="Nuevo sorteo!", description=f"Creado por {ctx.message.author.mention}")
+        embed=discord.Embed(title="¡Nuevo sorteo!", description=f"Creado por {ctx.message.author.mention}")
         embed.add_field(name=str(nombre), value=str(desc), inline=False)
         embed.add_field(name="Cantidad de ganadores", value=cant_ganadores, inline=False)
         embed.set_footer(text=f"Finaliza el {tiempo_formateado}, reacciona con 🎉 para entrar!")
 
         channel=self.bot.get_channel(gvchannel)
-        message = await channel.send("@everyone Nuevo sorteo!", embed=embed)
+        message = await channel.send("@everyone ¡Nuevo sorteo!", embed=embed)
         await message.add_reaction(emoji="<a:Tada:784983720226193428>")
 
 
@@ -171,6 +171,7 @@ class Reactions(commands.Cog):
         embed.add_field(name=str(nombre), value=str(desc), inline=False)
         embed.add_field(name="Cantidad de ganadores: ", value=cant_ganadores, inline=False)
         embed.set_footer(text=f"Finaliza el {tiempo_formateado}.")
+        embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
         await lchannel.send(embed=embed)
 
 
@@ -222,7 +223,7 @@ class Reactions(commands.Cog):
         for i in ganadores:
             ganador = ctx.guild.get_member(int(i))
             await ctx.send(f"Felicidades {ganador.mention} por ganar el sorteo \"{nombre}\"! {ctx.message.author.mention} se va a comunicar con vos brevemente")
-            await ganador.send(f"**Felicidades, {ganador.mention}! 🎉 Acabas de ganar el sorteo \"{nombre}\". En las proximas horas, Gtadictos se va a comunicar con vos para entregarte el premio!**")
+            await ganador.send(f"**Felicidades, {ganador.mention}! 🎉 Acabas de ganar el sorteo \"{nombre}\". En las proximas horas, Gtadictos21 se va a comunicar con vos para entregarte el premio!**")
 
 
 
@@ -270,28 +271,8 @@ class Reactions(commands.Cog):
     @commands.command(name="init")
     @commands.has_permissions(manage_guild = True)
     async def init(self,ctx):
-        embed=discord.Embed(title="", description=" ")
-        embed.add_field(name="----------------", value="**Bienvenido, acá estan las reglas. Asegúrate de leerlas y aceptarlas antes de continuar**.", inline=False)
-        embed.add_field(name="----------------", value="<a:Pin:784983430713835521> Antes de nada, les dejo el [link del canal](https://www.youtube.com/c/gtadictos21) de Gtadictos 21", inline=False)
-        embed.add_field(name="#1", value="<a:Desaprobado:784983048508276787> **NO** insultar, discriminar o faltar el respeto entre los miembros/staff.", inline=False)
-        embed.add_field(name="#2", value="<a:Desaprobado:784983048508276787> **NO** se permiten nombres/fotos obscenas. Queda a discreción del staff decidir que se considera como obsceno.", inline=False)
-        embed.add_field(name="#3", value="<a:Desaprobado:784983048508276787> **NO** se permite el contenido +18/NSFW. Puede ser un meme cada tanto, pero no pongas una foto de tu prima.", inline=False)
-        embed.add_field(name="#4", value="<a:Desaprobado:784983048508276787> **NO** spammear otros discords ajenos a esta comunidad.", inline=False)
-        embed.add_field(name="#5", value="<a:Desaprobado:784983048508276787> **NO** spammear canales de YouTube/Twitch sin permiso!", inline=False)
-        embed.add_field(name="#6", value="<a:Desaprobado:784983048508276787> **NO** se permite **comprar o vender NADA**, ya sea una bicicleta, un falcon o, un kilito de merca. ", inline=False)
-        embed.add_field(name="#7", value="<a:Desaprobado:784983048508276787> **NO** se permite hacer flood, es decir, mensajes que puedan interrumpir una conversación o molestar como, por ejemplo, enviar demasiados mensajes en muy poco tiempo. ", inline=False)
-        embed.add_field(name="#8", value="<a:Aprobado:784983108663246908> **USAR** los canales correspondientes, si vas a mandar un meme, mándalo a <#750496337916592199>, etc.", inline=False)
-        embed.add_field(name="#9", value="<a:Desaprobado:784983048508276787> Al entrar a un chat de voz, **NO GRITES NI SATURES EL MICROFONO**.", inline=False)
-        embed.add_field(name="#10", value="<a:Alerta:784982996225884200> **SI USAS CHEATS/SCRIPTS, TE REGALAMOS UNAS VACACIONES PERMANENTES A UGANDA**.", inline=False)
-        embed.add_field(name="#11", value="<a:Aprobado:784983108663246908> Para conseguir el rango de <@&750492534857400321> tenes que hablar con un <@&750492134695764059> o en su defecto con un <@&750491866570686535> y sin problemas, te lo van a dar!", inline=False)
-        embed.add_field(name="#12", value="<a:Aprobado:784983108663246908> Ante cualquier duda o consulta, podes hablar con un <@&750492134695764059> o un <@&750491866570686535> y seguro te ayudan a solucionar el problema!", inline=False)
-        embed.add_field(name="Algunos comandos de utilidad", value="_Son muy utiles!_", inline=False)
-        embed.add_field(name="!ayuda", value="Este comando te muestra toda la lista de comandos", inline=False)
-        embed.add_field(name="!nivel", value="Una vez que envíes algunos mensajes, usa este comando para conocer tu nivel.", inline=False)
-        embed.add_field(name="!rank", value="Este comando muestra los 5 usuarios con más nivel en el servidor.", inline=False)
-        embed.add_field(name="!botinfo", value="Este comando te muestra información extra acerca del bot, así como también, el código fuente!", inline=False)
-        embed.add_field(name="----------------", value="<a:Aprobado:784983108663246908> Recordá que nosotros nos guiamos por los [términos y condiciones de discord](https://www.discord.com/terms) y por las [directivas de la comunidad](https://www.discord.com/guidelines).", inline=False)
-        embed.set_footer(text="¡Para poder acceder a los demás canales, hace clic en el Emoji de abajo! \n\n Al hacer esto, aceptas las reglas y aceptas que de romperlas, podrías recibir las consecuencias correspondientes.")
+        embed=discord.Embed(title="", description=" ", color=0x00b7ff)
+        embed.add_field(name="¡Hacé click en el emoji!", value="¡Hacé click en el emoji <a:Thumbup:792171608323260416> para poder acceder al servidor! ", inline=False)
         welcome_message = await ctx.send(embed=embed)
         await welcome_message.add_reaction(emoji="<a:Thumbup:792171608323260416>")
 
