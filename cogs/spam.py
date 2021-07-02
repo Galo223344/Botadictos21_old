@@ -21,9 +21,6 @@ class Spam(commands.Cog):
         # Si el mensaje fue enviado por mensaje privado nos chupa un huevo
         if message.channel.type is discord.ChannelType.private:
             return
-        # Revisamos si el que envió el mensaje es un bot
-        if message.author.bot == True:
-            return
         # Revisamos si el que envió el mensaje es un mod/admin
         if message.author.guild_permissions.kick_members:
             return
@@ -71,6 +68,8 @@ class Spam(commands.Cog):
                 if mensaje_procesado[mensaje_procesado.index("discord.gg")+1] in codigos:
                     # print("No es spam")
                     return
+                elif mensaje_procesado[mensaje_procesado.index("discord.gg")+1] == gtadictos21:
+                    return
                 else:
                     # Si no lo está, significa que es una invitación de otro servidor. Así que avisamos al usuario y eliminamos el mensaje
                     warn = await message.channel.send(f"{message.author.mention}, por favor evita enviar invitaciones de otros servers de discord :)")
@@ -104,6 +103,28 @@ class Spam(commands.Cog):
                     await warn.delete()
                     return
 
+        if "streancommunuty.ru" in mensaje_procesado: # "steancomunnity.ru" or "steamcommuinityi.com" or "steamconmmunnltyi.com" or "bit-skins.ru"
+            # print("encontrado steam fake")
+            await message.delete()
+            reason = "Baneado automatico por spam engañoso, apelar a **contacto@gtadictos21.com**"
+            reason = reason + f"; Baneo efectuado por Bot - Accion automatica"
+            mensaje = f"Has sido baneado de {message.guild.name} por la siguente razón: \"{reason}\""
+            
+            try:
+                await message.author.send(mensaje)
+            except:
+                pass
+
+            channel = self.bot.get_channel(logchannel)
+            embed=discord.Embed(title=f"{message.author} Envió un mensaje de engañoso y fue baneado automaticamente", timestamp= datetime.now(), color=0x804000)
+            embed.add_field(name="Mensaje original:", value=message.content, inline=False)
+            embed.set_thumbnail(url=message.author.avatar_url)
+            await channel.send(embed=embed)
+
+            await message.channel.send(f"{message.author} fue baneado automaticamente por spam.")
+            await message.guild.ban(message.author, reason=reason)
+
+            
 
 
 
