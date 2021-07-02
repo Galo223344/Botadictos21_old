@@ -3,11 +3,29 @@ import datetime as dt
 import random
 import re
 import typing as t
+import os
 from enum import Enum
 
 import discord
 import wavelink
 from discord.ext import commands
+from dotenv import load_dotenv
+
+######### Importado por Galovich
+import requests
+from PIL import Image
+import traceback
+from fast_colorthief import get_dominant_color as getCol
+import tekore as tk
+
+
+# Cargamos el .env con los tokens
+load_dotenv()
+SP_ID = os.getenv('SP_ID')
+SP_SECRET = os.getenv('SP_SECRET')
+
+app_token = tk.request_client_token(SP_ID, SP_SECRET)
+spotify = tk.Spotify(app_token)
 
 URL_REGEX = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
 OPTIONS = {
@@ -155,19 +173,132 @@ class Player(wavelink.Player):
         except KeyError:
             pass
 
-    async def add_tracks(self, ctx, tracks):
+    async def sacarColor(self,track):
+
+        if not os.path.isfile(f"./cache/thumb_{track.ytid}.jpeg"):
+
+            resoluciones = ["maxresdefault","hqdefault","mqdefault","sddefault"]
+
+            for resolucion in resoluciones:
+                imagen = requests.get(f"https://i3.ytimg.com/vi/{track.ytid}/{resolucion}.jpg",stream=True)
+                imagen.raw.decode_content = True
+
+                im = Image.open(imagen.raw)
+                width, height = im.size   # Get dimensions
+                if width == 120 and height == 90:
+                    continue
+                left = (width - width/1.8)/2
+                top = (height - width/1.8)/2
+                right = (width + width/1.8)/2
+                bottom = (height + width/1.8)/2
+                break
+
+            # Crop the center of the image
+            im = im.crop((left, top, right, bottom))
+
+            im.save(f"./cache/thumb_{track.ytid}.jpeg")
+
+        colores = getCol(f"./cache/thumb_{track.ytid}.jpeg",quality=3)
+        coulores = discord.Colour.from_rgb(colores[0],colores[1],colores[2])
+
+        return coulores
+
+
+    async def add_tracks(self, ctx, src, tracks):
         if not tracks:
             raise NoTracksFound
 
-        if isinstance(tracks, wavelink.TrackPlaylist):
-            self.queue.add(*tracks.tracks)
-        elif len(tracks) == 1:
+        elif src == "sp_p":
+            # await ctx.send("Recibidas canciones, canciones recibidas:")
+            for cancion in tracks[0]:
+                self.queue.add(cancion)
+
+            formateado = ""
+            if len(tracks[1]) >4:
+                for cancion in tracks[1][:4]:
+                    formateado = formateado+f"\'{cancion}\'"+"\n"
+                formateado = formateado + f"Y {len(tracks[1])-4} canciónes mas..."
+            else:
+                for cancion in tracks[1]:
+                    formateado = formateado+f"\'{cancion}\'"+"\n"
+
+            colorcito = await self.sacarColor(tracks[0][0])
+
+            embed = discord.Embed(title="Canciónes agregadas a la lista:",description=f"**{formateado}**",color=colorcito)
+            file = discord.File(f"./cache/thumb_{tracks[0][0].ytid}.jpeg", filename=f"{tracks[0][0].ytid}.jpeg")
+            tracks[0][0].thumb = f"attachment://{tracks[0][0].ytid}.jpeg"
+            embed.set_thumbnail(url=tracks[0][0].thumb)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            # await ctx.send(file=file)
+            await ctx.send(file=file,embed=embed)
+
+        elif src == "sp_t":
             self.queue.add(tracks[0])
-            await ctx.send(f"La cancion {tracks[0].title} fue añadida a la lista.")
+            colorcito = await self.sacarColor(tracks[0])
+            embed = discord.Embed(title="Canción agregada la lista:",description=f"**{tracks[0].title}**",color=colorcito)
+            file = discord.File(f"./cache/thumb_{tracks[0].ytid}.jpeg", filename=f"{tracks[0].ytid}.jpeg")
+            tracks[0].thumb = f"attachment://{tracks[0].ytid}.jpeg"
+            embed.set_thumbnail(url=tracks[0].thumb)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(file=file,embed=embed)
+
+
+
+        elif isinstance(tracks, wavelink.TrackPlaylist):
+            for cancion in tracks.tracks:
+                cancion.thumb = f"https://i3.ytimg.com/vi/{cancion.ytid}/maxresdefault.jpg"
+            self.queue.add(*tracks.tracks)
+            musicas = set(i.title for i in tracks.tracks)
+            musicas = list(musicas)
+            
+                    
+            formateado = ""
+            if len(musicas) >4:
+                for cancion in musicas[:4]:
+                    formateado = formateado+f"\'{cancion}\'"+"\n"
+                formateado = formateado + f"Y {len(musicas)-4} canciónes mas..."
+            else:
+                for cancion in musicas:
+                    formateado = formateado+f"\'{cancion}\'"+"\n"
+
+            colorcito = await self.sacarColor(tracks.tracks[0])
+
+            embed = discord.Embed(title="Canciónes agregadas a la lista:",description=f"**{formateado}**",color=colorcito)
+            file = discord.File(f"./cache/thumb_{tracks.tracks[0].ytid}.jpeg", filename=f"{tracks.tracks[0].ytid}.jpeg")
+            tracks.tracks[0].thumb = f"attachment://{tracks.tracks[0].ytid}.jpeg"
+            embed.set_thumbnail(url=tracks.tracks[0].thumb)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            # await ctx.send(file=file)
+            await ctx.send(file=file,embed=embed)
+
+        elif len(tracks) == 1:
+            tracks[0].thumb = f"https://i3.ytimg.com/vi/{tracks[0].ytid}/maxresdefault.jpg"
+            self.queue.add(tracks[0])
+            colorcito = await self.sacarColor(tracks[0])
+            embed = discord.Embed(title="Canción agregada la lista:",description=f"**{tracks[0].title}**",color=colorcito)
+            file = discord.File(f"./cache/thumb_{tracks[0].ytid}.jpeg", filename=f"{tracks[0].ytid}.jpeg")
+            tracks[0].thumb = f"attachment://{tracks[0].ytid}.jpeg"
+            embed.set_thumbnail(url=tracks[0].thumb)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(file=file,embed=embed)
+
+
         else:
             if (track := await self.choose_track(ctx, tracks)) is not None:
                 self.queue.add(track)
-                await ctx.send(f"La cancion {track.title} fue añadida a la lista.")
+
+                track.thumb = f"https://i3.ytimg.com/vi/{track.ytid}/maxresdefault.jpg"
+
+                colorcito = await self.sacarColor(track)
+
+                embed = discord.Embed(title="Canción agregada la lista:",description=f"**{track.title}**",color=colorcito)
+                file = discord.File(f"./cache/thumb_{track.ytid}.jpeg", filename=f"{track.ytid}.jpeg")
+                track.thumb = f"attachment://{track.ytid}.jpeg"
+                embed.set_thumbnail(url=track.thumb)
+                embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+                await ctx.send(file=file, embed=embed)
+
+                # await ctx.send(f"La cancion **{track.title}** fue añadida a la lista.")
 
         if not self.is_playing and not self.queue.is_empty:
             await self.start_playback()
@@ -181,7 +312,7 @@ class Player(wavelink.Player):
             )
 
         embed = discord.Embed(
-            title="¡Elige una cancion!",
+            title="¡Elige una canción!",
             description=(
                 "\n".join(
                     f"**{i+1}.** {t.title} ({t.length//60000}:{str(t.length%60).zfill(2)})"
@@ -192,7 +323,7 @@ class Player(wavelink.Player):
             timestamp=dt.datetime.utcnow()
         )
         embed.set_author(name="Resultados de busqueda:")
-        embed.set_footer(text=f"Lista pedida por {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+        embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
 
         msg = await ctx.send(embed=embed)
         for emoji in list(OPTIONS.keys())[:min(len(tracks), len(OPTIONS))]:
@@ -235,7 +366,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
     @wavelink.WavelinkMixin.listener()
     async def on_node_ready(self, node):
-        print(f" El nodo de Wavelink `{node.identifier}` esta listo.")
+        print(f"El nodo de Wavelink `{node.identifier}` esta listo.")
 
     @wavelink.WavelinkMixin.listener("on_track_stuck")
     @wavelink.WavelinkMixin.listener("on_track_end")
@@ -248,7 +379,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
     async def cog_check(self, ctx):
         if isinstance(ctx.channel, discord.DMChannel):
-            await ctx.send("Los comandos musicales no estan disponibles por mensajes privados.")
+            await ctx.send("¡Los comandos para este bot no estan disponibles por mensajes privados!")
             return False
 
         return True
@@ -285,19 +416,20 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     @connect_command.error
     async def connect_command_error(self, ctx, exc):
         if isinstance(exc, AlreadyConnectedToChannel):
-            await ctx.send("El bot ya se encuentra en un canal de voz.")
+            await ctx.send("¡El bot ya se encuentra en un canal de voz!")
         elif isinstance(exc, NoVoiceChannel):
-            await ctx.send("No se encontró un canal al cual unirse.")
+            await ctx.send("¡No se encontró un canal al cual unirse!")
 
-    @commands.command(name="desconectar", aliases=["disconnect"])
+    @commands.command(name="desconectar", aliases=["disconnect","d"])
     async def disconnect_command(self, ctx):
         player = self.get_player(ctx)
         await player.teardown()
-        await ctx.send("El bot se desconectó.")
+        await ctx.send("El bot se desconectó")
 
-    @commands.command(name="play",aliases=["Reproducir"])
+    @commands.command(name="play", aliases=["p"])
     async def play_command(self, ctx, *, query: t.Optional[str]):
         player = self.get_player(ctx)
+        # print(query)
 
         if not player.is_connected:
             await player.connect(ctx)
@@ -307,21 +439,90 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                 raise QueueIsEmpty
 
             await player.set_pause(False)
-            await ctx.send("Resumido.")
+            await ctx.send("Resumido...")
+
+        elif "open.spotify.com" in str(query):
+            await ctx.channel.send("Para reproducir de Spotify por favor usá !spotify [link] ó !sp [link]")
 
         else:
             query = query.strip("<>")
             if not re.match(URL_REGEX, query):
                 query = f"ytsearch:{query}"
 
-            await player.add_tracks(ctx, await self.wavelink.get_tracks(query))
+            await player.add_tracks(ctx,"yt",await self.wavelink.get_tracks(query))
 
     @play_command.error
     async def play_command_error(self, ctx, exc):
         if isinstance(exc, QueueIsEmpty):
             await ctx.send("¡La lista de reproduccion se encuentra vacia!")
         elif isinstance(exc, NoVoiceChannel):
-            await ctx.send("No se encontró un canal al cual unirse.")
+            await ctx.send("¡No se encontró un canal al cual unirse!")
+        else:
+            print(exc)
+            print(traceback.format_exc())
+
+    @commands.command(name="spotify",aliases=["sp"])
+    async def spoti(self,ctx, *, query:t.Optional[str]):
+        player = self.get_player(ctx)
+
+        if not player.is_connected:
+            await player.connect(ctx)
+
+        if "open.spotify.com" in query:
+            link = query.split("/")
+            if "playlist" in link:
+                await ctx.send("Procesando... ⚙️")
+                async with ctx.typing():
+                    link = link[4].split("?")
+                    link = link[0]
+                    pl_id = link
+                    # print(pl_id)
+
+                    playlist = spotify.playlist_items(pl_id)
+                    playlist = spotify.all_items(playlist)
+                    musicas = list()
+                    canciones = list()
+                    for track in playlist:
+                        if track.track == None:
+                            continue
+                        cancion_formateada = f"{track.track.name} - {track.track.album.artists[0].name}"
+                        musicas.append(cancion_formateada)
+                        cancion_objeto = await self.wavelink.get_tracks(f"ytsearch:{cancion_formateada} Audio")
+                        cancion_objeto = cancion_objeto[0]
+                        cancion_objeto.thumb = f"https://i3.ytimg.com/vi/{cancion_objeto.ytid}/maxresdefault.jpg"
+                        canciones.append(cancion_objeto)
+
+                await player.add_tracks(ctx,"sp_p",(canciones,musicas))
+
+
+            elif "track" in link:
+                link = link[4].split("?")
+                link = link[0]
+                track_id = link
+                track = spotify.track(track_id)
+                if track == None:
+                    await ctx.send("Canción no disponible.")
+                    return
+                cancion_formateada = f"{track.name} - {track.album.artists[0].name}"
+                cancion_objeto = await self.wavelink.get_tracks(f"ytsearch:{cancion_formateada} Audio")
+                cancion_objeto = cancion_objeto[0]
+                cancion_objeto.thumb = f"https://i3.ytimg.com/vi/{cancion_objeto.ytid}/maxresdefault.jpg"
+                await player.add_tracks(ctx,"sp_t",(cancion_objeto,cancion_formateada))
+
+    @spoti.error
+    async def spoti_error(self, ctx, exc):
+        if isinstance(exc, QueueIsEmpty):
+            await ctx.send("¡La lista de reproduccion se encuentra vacia!")
+        elif isinstance(exc, NoVoiceChannel):
+            await ctx.send("¡No se encontró un canal al cual unirse!")
+        else:
+            if "404: Not found." in str(exc):
+                await ctx.send("Playlist no encontrada. ¡Asegurate de que sea pública!")
+            elif "404: Invalid playlist Id" in str(exc):
+                await ctx.send("¡Link de playlist invalido!")
+            else:
+                print(exc)
+                print(traceback.format_exc())
 
     @commands.command(name="pausa")
     async def pause_command(self, ctx):
@@ -331,56 +532,70 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             raise PlayerIsAlreadyPaused
 
         await player.set_pause(True)
-        await ctx.send("La cancion se encuentra pausada.")
+        await ctx.send("¡La canción se encuentra pausada!")
 
     @pause_command.error
     async def pause_command_error(self, ctx, exc):
         if isinstance(exc, PlayerIsAlreadyPaused):
-            await ctx.send("Esta cancion ya se encuentra pausada.")
+            await ctx.send("¡Esta canción ya se encuentra pausada!")
 
     @commands.command(name="stop")
     async def stop_command(self, ctx):
         player = self.get_player(ctx)
         player.queue.empty()
         await player.stop()
-        await ctx.send("La lista se ha parado.")
+        await ctx.send("La lista se ha parado")
 
-    @commands.command(name="saltar", aliases=["skip","saltear"])
+    @commands.command(name="saltar", aliases=["skip","s"])
     async def next_command(self, ctx):
         player = self.get_player(ctx)
 
         if not player.queue.upcoming:
             raise NoMoreTracks
 
+        cancion = player.queue.upcoming[0]
+
+        colorcitos = await player.sacarColor(cancion)
+
         await player.stop()
-        await ctx.send("¡Reproduciendo la proxima cancion!")
+        embed = discord.Embed(title="Reproduciendo la siguiente canción...",description=cancion.title,colour=colorcitos)
+        file = discord.File(f"./cache/thumb_{cancion.ytid}.jpeg", filename=f"{cancion.ytid}.jpeg")
+        embed.set_thumbnail(url=f"attachment://{cancion.ytid}.jpeg")
+        embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+        await ctx.send(file=file,embed=embed)
+        # await ctx.send(f"Reproduciendo la siguiente cancion...\n**{player.queue.upcoming[0].title}**")
 
     @next_command.error
     async def next_command_error(self, ctx, exc):
         if isinstance(exc, QueueIsEmpty):
             await ctx.send("¡La lista de reproduccion se encuentra vacia!")
         elif isinstance(exc, NoMoreTracks):
-            await ctx.send("No hay canciones en la lista de reproduccion.")
+            await ctx.send("¡No hay canciónes en la lista de reproduccion!")
+        else:
+            print(exc)
+            print(traceback.format_exc())
 
-    @commands.command(name="anterior",aliases=["Volver","atras"])
+    @commands.command(name="anterior")
     async def previous_command(self, ctx):
         player = self.get_player(ctx)
 
         if not player.queue.history:
             raise NoPreviousTracks
 
+
         player.queue.position -= 2
         await player.stop()
-        await ctx.send("Reproduciendo la cancion anterior.")
+
+        await ctx.send(f"Reproduciendo la cancion anterior...\n**{player.queue.current_track}**")
 
     @previous_command.error
     async def previous_command_error(self, ctx, exc):
         if isinstance(exc, QueueIsEmpty):
             await ctx.send("¡La lista de reproduccion se encuentra vacia!")
         elif isinstance(exc, NoPreviousTracks):
-            await ctx.send("No hay canciones en la lista de reproduccion.")
+            await ctx.send("¡No hay canciones en la lista de reproduccion!")
 
-    @commands.command(name="mezclar",aliases=["aleatorizar","barajar","random"])
+    @commands.command(name="mezclar",aliases=["aleatorizar","barajar","random","shuffle"])
     async def shuffle_command(self, ctx):
         player = self.get_player(ctx)
         player.queue.shuffle()
@@ -389,18 +604,22 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     @shuffle_command.error
     async def shuffle_command_error(self, ctx, exc):
         if isinstance(exc, QueueIsEmpty):
-            await ctx.send("La lista no se puede aleatorizar, porque se encuentra vacia.")
+            await ctx.send("La lista no se puede aleatorizar, porque se encuentra vacia")
 
-    @commands.command(name="repetir", aliases=["Repeticion","repetición"])
-    async def repeat_command(self, ctx, mode: str):
+    @commands.command(name="repetir", aliases=["Repeticion","repetición","loop"])
+    async def repeat_command(self, ctx, mode: str = None):
+        if mode == None:
+            await ctx.send("Uso: !repetir [Modo]\nDonde modo puede ser \'none\' para no repetir ninguna canción, \'1\' para repetir la canción que se está reproduciendo y \'all\', para repetir la lista actual.")
+            return
+
         if mode not in ("none", "1", "all"):
             raise InvalidRepeatMode
 
         player = self.get_player(ctx)
         player.queue.set_repeat_mode(mode)
-        await ctx.send(f"El modo de repeticion se encuentra {mode}.")
+        await ctx.send(f"El modo de repeticion se encuentra en el modo: {mode}")
 
-    @commands.command(name="cola",aliases=["Lista","queue"])
+    @commands.command(name="cola", aliases=["lista","queue","q"])
     async def queue_command(self, ctx, show: t.Optional[int] = 10):
         player = self.get_player(ctx)
 
@@ -408,21 +627,21 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             raise QueueIsEmpty
 
         embed = discord.Embed(
-            title="Lista de reproduccion",
-            description=f"Mostrando las proximas {show} canciones",
+            title="Lista de reproduccion:",
+            description=f"Mostrando las proximas {show} canciónes",
             colour=ctx.author.colour,
             timestamp=dt.datetime.utcnow()
         )
         embed.set_author(name="Resultados de la lista de reproduccion")
-        embed.set_footer(text=f"Lista pedida por {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+        embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
         embed.add_field(
-            name="Actualmente escuchando",
-            value=getattr(player.queue.current_track, "title", "No hay canciones sonando actualmente."),
+            name="Actualmente escuchando:",
+            value=getattr(player.queue.current_track, "title", "¡No hay canciónes sonando actualmente!"),
             inline=False
         )
         if upcoming := player.queue.upcoming:
             embed.add_field(
-                name="Next up",
+                name="Luego:",
                 value="\n".join(t.title for t in upcoming[:show]),
                 inline=False
             )
@@ -432,8 +651,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     @queue_command.error
     async def queue_command_error(self, ctx, exc):
         if isinstance(exc, QueueIsEmpty):
-            await ctx.send("la lista de reproduccion se encuentra vacia.")
+            await ctx.send("¡La lista de reproduccion se encuentra vacia!")
 
+# print(dir(Music))
 
 def setup(bot):
     bot.add_cog(Music(bot))
