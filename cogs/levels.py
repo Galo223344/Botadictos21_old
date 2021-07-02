@@ -44,13 +44,13 @@ class Levels(commands.Cog):
                 users = json.load(f)
             lvl = users[str(id)]['level']
             exp = users[str(id)]['experience']
-            await ctx.send(f'Sos nivel {lvl} y tenés {exp} puntos de experiencia')
+            await ctx.send(f'¡Sos nivel {lvl} y tenés {exp} puntos de experiencia!')
         else:
             id = member.id
             with open('users.json', 'r') as f:
                 users = json.load(f)
             lvl = users[str(id)]['level']
-            await ctx.send(f'{member} está en el nivel {lvl}!')
+            await ctx.send(f'¡{member} está en el nivel {lvl}!')
 
 
 async def update_data(self, users, user):
@@ -71,7 +71,7 @@ async def level_up(self, users, user, message):
         lvl_start = users[f'{user.id}']['level']
         lvl_end = int(experience ** (1 / 4))
         if lvl_start < lvl_end:
-            await(await message.channel.send(f'Felicidades {user.mention}, has subido al nivel {lvl_end}')).delete(delay=20)
+            await(await message.channel.send(f'¡Felicidades {user.mention}, has subido al nivel {lvl_end}!')).delete(delay=20)
             users[f'{user.id}']['level'] = lvl_end
 
 

@@ -28,7 +28,7 @@ class Temp(commands.Cog):
     @commands.command(name="tempban",aliases=["Tempban"])
     async def tempban(self, ctx, member:discord.User=None, tiempo=None, *, reason=None):
         if member == None or member == ctx.message.author:
-            await ctx.channel.send("Usuario no valido.")
+            await ctx.channel.send("¡Usuario no valido!")
             return
 
 
@@ -38,7 +38,7 @@ class Temp(commands.Cog):
             await ctx.send("Porfavor especifica un tiempo de la siguiente manera: `1m 1h 1d`")
             return
         if reason == None:
-            reason = "Sin razón especificada"
+            reason = "Sin razón especificada."
 
         
 
@@ -83,7 +83,7 @@ class Temp(commands.Cog):
 
 
         if minutos <= 0 and horas <= 0 and dias <= 0:
-            await ctx.send("Tiempo invalido")
+            await ctx.send("¡Tiempo invalido!")
             return
 
         # print(f"dias = {dias}")
@@ -96,8 +96,8 @@ class Temp(commands.Cog):
         banlist.append(f"{member.id};{tiempodevuelta};{ctx.guild.id}")
         # print("agregado el primer valor a banlist")
         tiempo_formateado = tiempodevuelta.strftime("%d/%m/%Y %H:%M")
-        reason = reason + f", baneo efectuado por {ctx.message.author.name}. Expira el {tiempo_formateado}"
-        message = f"Has sido baneado temporalmente de {ctx.guild.name} por la siguente razón: {reason}"
+        reason = reason + f" Baneo efectuado por **{ctx.message.author.name}**. Expira el: {tiempo_formateado}"
+        message = f"Has sido baneado temporalmente de **{ctx.guild.name}** por la siguente razón: {reason}"
         await member.send(message)
 
         with open('tempban.txt', 'r') as file:
@@ -112,7 +112,7 @@ class Temp(commands.Cog):
             for i in banlist:
                 ofile.write(f"{i.strip()} \n")
             # print("terminado segundo for loop")
-        await ctx.send(f"El usuario {member.name} ha sido baneado y será desbaneado el {tiempo_formateado}")
+        await ctx.send(f"El usuario **{member.name}** ha sido baneado y será desbaneado el {tiempo_formateado}")
         await ctx.guild.ban(member, reason=reason)
 
 
@@ -130,7 +130,7 @@ class Temp(commands.Cog):
     @commands.command(name="tempmute",aliases=["Tempmute"])
     async def tempmute(self, ctx, member:discord.Member=None, * , tiempo=None,):
         if member == None or member == ctx.message.author:
-            await ctx.channel.send("Usuario no valido.")
+            await ctx.channel.send("¡Usuario no valido!")
             return
 
         Role = discord.utils.get(member.guild.roles, name="Silenciado")
@@ -191,7 +191,7 @@ class Temp(commands.Cog):
         # print(f"minutos = {minutos}")
 
         if minutos == 0 and horas == 0 and dias == 0:
-            await ctx.send("Tiempo invalido")
+            await ctx.send("¡Tiempo invalido!")
             return
 
 
@@ -215,7 +215,7 @@ class Temp(commands.Cog):
         await member.add_roles(Role)
         await member.remove_roles(role2)
 
-        await ctx.send(f"El usuario {member.name} ha sido muteado y será desmuteado el {tiempo_formateado}")
+        await ctx.send(f"El usuario **{member.name}** ha sido muteado y será desmuteado el {tiempo_formateado}")
 
     @tasks.loop(minutes=1)
     async def tiempocheck(self):
@@ -244,7 +244,7 @@ class Temp(commands.Cog):
                         embed.add_field(name= "Usuario desbaneado:" ,value=usuario.name, inline=True)
                         await channel.send(embed=embed)
                     except:
-                        await channel.send(f"El tempban de {usuario} ha fallado. Esto puede deberse a que el usuario fue desbaneado antes de que expirara el baneo temporal o por alguna otra razón. Si el usuario sigue baneado deberian desbanearlo. <@388924384016072706>")
+                        await channel.send(f"El tempban de **{usuario}** ha fallado. Esto puede deberse a que el usuario fue desbaneado antes de que expirara el baneo temporal o por alguna otra razón. Si el usuario sigue baneado deberian desbanearlo. <@388924384016072706>")
 
         with open("tempban.txt",'w') as ofile:
             for i in unbanlist:
@@ -284,11 +284,11 @@ class Temp(commands.Cog):
                     # print("dect5")
                     if Role not in member.roles:
                         # print("dect5.1")
-                        await channel.send(f"Error tempmute. El usuario {member.name} no está silenciado")
+                        await channel.send(f"Error de tempmute. El usuario **{member.name}** no está silenciado")
                         # print("dect5.2")
                         continue
 
-                    print("agregado rol la people")
+                    print("Agregado rol la people")
                     # print(rolepeople)
                     await member.add_roles(rolepeople)
 

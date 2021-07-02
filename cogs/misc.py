@@ -4,7 +4,6 @@ from cogs.logs import logchannel
 from unidecode import unidecode
 
 
-
 # TODO: Comentar el codigo(?)
 
 
@@ -22,11 +21,11 @@ class Misc(commands.Cog):
 
     @commands.command(name='youtube', help="Link de mi canal de youtube", aliases=["Youtube","YT","yt","Yt"])
     async def youtube(self,ctx):
-        await ctx.send("Acá está el link! https://www.youtube.com/c/gtadictos21")
+        await ctx.send("¡Acá está el link! https://www.youtube.com/c/gtadictos21")
 
     @commands.command(name="status")
     async def status(self,ctx):
-        await ctx.send("Status de los servidores en https://status.gtadictos21.com/")
+        await ctx.send("Status de los servidores en: https://status.gtadictos21.com/")
 
     # Invitacion
 
@@ -40,17 +39,17 @@ class Misc(commands.Cog):
 
     # El baile del troleo
 
-    @commands.command(name='nopruebesestecomando', help="No lo hagas", aliases=["Nopruebesestecomando","Nopurebesestecomando","nopurebesestecomando"])
+    @commands.command(name='nopruebesestecomando', help="Simplemente, NO lo hagas", aliases=["Nopruebesestecomando","Nopurebesestecomando","nopurebesestecomando"])
     async def invitacion(self,ctx):
         if ctx.channel.type is discord.ChannelType.private:
             return
-        link = await ctx.channel.create_invite(max_age = 10000, max_uses=1,reason="baile del troleo")
-        await ctx.author.send("Troleado " + str(link))
+        link = await ctx.channel.create_invite(max_age = 10000, max_uses=1,reason="Baile del troleo")
+        await ctx.author.send("Troleado" + str(link))
         await ctx.guild.kick(ctx.author)
 
         channel = self.bot.get_channel(logchannel)
-        embed=discord.Embed(title="Alguien fue troleado", color=0xff6600)
-        embed.add_field(name=f"{ctx.author} usó !nopruebesestecomando", value="xdxdxdxdxdxdxd", inline=True)
+        embed=discord.Embed(title="Alguien fue troleado, usó !nopruebesestecomando", color=0xff6600)
+        embed.add_field(name=f"{ctx.author} usó !nopruebesestecomando", value="xDxDxDxDxD", inline=True)
 
         await channel.send(embed=embed)
         # print(f"en teoría {ctx.author} fue kickeado")
@@ -59,12 +58,13 @@ class Misc(commands.Cog):
 
     @commands.command(name="botinfo", help="Muestra información del bot", aliases=["Botinfo","BotInfo","infobot","Infobot"])
     async def botinfo(self,ctx):
-        embed=discord.Embed(title="Haz click para ver el codigo fuente", url="https://github.com/Galo223344/Botdictos21/", description="", color=0x2cdca3)
-        embed.add_field(name="Botdictos por", value="<@388924384016072706>", inline=True)
-        embed.add_field(name="Musicadictos por", value="<@503739646895718401>", inline=True)
-        embed.add_field(name="Para el servidor", value="**El Club de los 21\'s**", inline=True)
-        embed.add_field(name="Hosteado en", value="SparkedHost.us", inline=True)
+        embed=discord.Embed(title="Haz click para ver el codigo fuente", url="https://github.com/Galo223344/Botadictos21/", description="", color=0x2cdca3)
+        embed.add_field(name="Botadictos21 por:", value="<@388924384016072706>", inline=True)
+        embed.add_field(name="Musicadictos21 por:", value="<@503739646895718401>", inline=True)
+        embed.add_field(name="Para el servidor:", value="**El Club de los 21\'s**", inline=True)
+        embed.add_field(name="Hosteado en:", value="[Sparked Host](https://gtadictos21.com/sparkedhost)", inline=True)
         embed.set_thumbnail(url=self.bot.user.avatar_url)
+        embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
 
     # Ayuda
@@ -74,58 +74,65 @@ class Misc(commands.Cog):
 
         if argum is None:
             embed=discord.Embed(title="Ayuda", description="Comandos disponibles:", color=0x80ff00)
-            embed.add_field(name="!Ayuda", value="Te envia este mensaje!", inline=False)
-            embed.add_field(name="!Youtube", value="El link para mi canal de youtube!", inline=False)
-            embed.add_field(name="!Invitacion", value="Te da un link de invitación para el servidor de discord!", inline=False)
-            embed.add_field(name="!Nopruebesestecomando", value="No lo hagas!", inline=False)
-            embed.add_field(name="!Botinfo", value="Te envia información acerca del bot", inline=False)
-            embed.add_field(name="!Userinfo", value="Te da información de vos mismo o de alguien más!", inline=False)
-            embed.add_field(name="!Sugerencia", value="Usar en privado. Te permite enviar una sugerencia!", inline=False)
-            embed.add_field(name="!Avatar", value="Te envía una foto de tu avatar actual", inline=False)
-            embed.add_field(name="!Remindme/Recuerdame", value="(Uso: !recuerdame 1m/1h/1d cosa a recordar).\nTe envía un mensaje privado después del tiempo especificado con el contenido a recordar", inline=False)
+            embed.add_field(name="!Ayuda", value="Te envia este mensaje.", inline=False)
+            embed.add_field(name="!Youtube", value="Envia el link para mi canal de YouTube.", inline=False)
+            embed.add_field(name="!Invitacion", value="Te da un link de invitación para el servidor de discord.", inline=False)
+            embed.add_field(name="!Nopruebesestecomando", value="Simplemente, NO lo hagas.", inline=False)
+            embed.add_field(name="!Botinfo", value="Te envia información acerca del bot.", inline=False)
+            embed.add_field(name="!Userinfo", value="Te da información de vos mismo o de alguien más.", inline=False)
+            embed.add_field(name="!Serverinfo", value="Te muestra algunos datos sobre el servidor.", inline=False)
+            embed.add_field(name="!Sugerencia", value="Usar en privado. Te permite enviar una sugerencia.", inline=False)
+            embed.add_field(name="!Avatar", value="Te envía una foto de tu avatar actual.", inline=False)
+            embed.add_field(name="!Remindme/Recuerdame", value="(Uso: !recuerdame 1m/1h/1d cosa a recordar).\nTe envía un mensaje privado después del tiempo especificado con el contenido a recordar.", inline=False)
             embed.add_field(name="!Reaccion/React [palabras]", value="Reacciona al mensaje que respondiste con las palabras que mandaste\nNo usar Ñ, mensajes de más de 15 cáracteres o letras repetidas.", inline=False)
+            embed.add_field(name="!CSGO", value="Te envía información acerca del servidor de CS:GO.", inline=False)
+            embed.add_field(name="!Status", value="Link para ver el status de los servidores.", inline=False)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
 
             return
 
         if (argum.lower() == "mod" or argum.lower() == "moderacion") and ctx.author.guild_permissions.kick_members:
-            embed=discord.Embed(title="Comandos de moderación", color=0xffff00)
-            embed.add_field(name="!mute/silenciar (usuario)", value="Mutea al usuario. Permisos requeridos: Manejar roles", inline=False)
-            embed.add_field(name="!tempmute (usuario) (tiempo {*m *h *d})", value="Mutea al usuario temporalmente. Permisos requeridos: Manejar roles", inline=False)
-            embed.add_field(name="!unmute/dessilenciar (usuario)", value="Desmutea al usuario. Permisos requeridos: Manejar roles", inline=False)
-            embed.add_field(name="!kick/expulsar (usuario)", value="Expulsa a el usuario especificado. Permisos requeridos: Kickear usuarios", inline=False)
-            embed.add_field(name="!ban (usuario) (razón)", value="Banea a el usuario indefinidamente. Permisos requeridos: Banear usuarios", inline=False)
-            embed.add_field(name="!tempban (usuario) (tiempo) (razón)", value="Banea a el usuario y lo desbanea una vez expira el tiempo especificado. IMPORTANTE, al usar tiempos complejos tales como '1h 30m' es necesario poner el tiempo entre comillas. Permisos requerios: Banear ususarios", inline=False)
-            embed.add_field(name="!unban/desbanear (usuario con tag)", value="Desbanea a el usuario. Permisos requerios: Banear usuarios", inline=False)
-            embed.add_field(name="!purge (cantidad)", value="Elimina la cantidad de mensajes especificados con un limite de 500 mensajes. Permisos requeridos: Manejar server", inline=False)
+            embed=discord.Embed(title="Comandos de moderación:", color=0xffff00)
+            embed.add_field(name="!mute/silenciar (usuario)", value="Mutea al usuario. Permisos requeridos: Manejar roles.", inline=False)
+            embed.add_field(name="!tempmute (usuario) (tiempo {*m *h *d})", value="Mutea al usuario temporalmente. Permisos requeridos: Manejar roles.", inline=False)
+            embed.add_field(name="!unmute/dessilenciar (usuario)", value="Desmutea al usuario. Permisos requeridos: Manejar roles.", inline=False)
+            embed.add_field(name="!kick/expulsar (usuario)", value="Expulsa a el usuario especificado. Permisos requeridos: Kickear usuarios.", inline=False)
+            embed.add_field(name="!ban (usuario) (razón)", value="Banea a el usuario indefinidamente. Permisos requeridos: Banear usuarios.", inline=False)
+            embed.add_field(name="!tempban (usuario) (tiempo) (razón)", value="Banea a el usuario y lo desbanea una vez expira el tiempo especificado. IMPORTANTE, al usar tiempos complejos tales como '1h 30m' es necesario poner el tiempo entre comillas. Permisos requerios: Banear usuarios.", inline=False)
+            embed.add_field(name="!unban/desbanear (usuario con tag)", value="Desbanea a el usuario. Permisos requerios: Banear usuarios.", inline=False)
+            embed.add_field(name="!purge (cantidad)", value="Elimina la cantidad de mensajes especificados con un limite de 500 mensajes. Permisos requeridos: Manejar servidor.", inline=False)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
 
         elif argum.lower() == "admin" and ctx.author.guild_permissions.manage_guild:
-            embed=discord.Embed(title="Comandos de administación", color=0x008000)
-            embed.add_field(name="!logchannel", value="Se van a enviar todos los logs a este canal", inline=False)
-            embed.add_field(name="!init", value="Envía mensaje de bienvenida y comienza a escuchar reacciones", inline=False)
-            embed.add_field(name="!gvchannel", value="Se van a enviar todos los sorteos a este canal", inline=False)
-            embed.add_field(name="!ignore", value="Los logs ignoraran este canal", inline=False)
-            embed.add_field(name="!ignorelist", value="envía una lista de todos los canales en la ignorelist", inline=False)
-            embed.add_field(name="!sugchannel", value="Se envian las sugerencias a este canal", inline=False)
-            embed.add_field(name="!mc comando \"comando\"", value="Envia comando al server de minecraft", inline=False)
-            embed.add_field(name="!mc start", value="Inicia el server de minecraft", inline=False)
-            embed.add_field(name="!mc restart", value="Reinicia el server de minecraft", inline=False)
-            embed.add_field(name="!mc stop", value="Para el server de minecraft", inline=False)
+            embed=discord.Embed(title="Comandos de administación:", color=0x008000)
+            embed.add_field(name="!Logchannel", value="Se van a enviar todos los logs a este canal.", inline=False)
+            embed.add_field(name="!Init", value="Envía mensaje de bienvenida y comienza a escuchar reacciones.", inline=False)
+            embed.add_field(name="!Gvchannel", value="Se van a enviar todos los sorteos a este canal.", inline=False)
+            embed.add_field(name="!Ignore", value="Los logs ignoraran este canal.", inline=False)
+            embed.add_field(name="!Ignorelist", value="envía una lista de todos los canales en la ignorelist.", inline=False)
+            embed.add_field(name="!Sugchannel", value="Se envian las sugerencias a este canal.", inline=False)
+            embed.add_field(name="!Reload 'cog'", value="Se recargará el cog.", inline=False)
+            embed.add_field(name="!Load 'cog'", value="Se cargará el cog.", inline=False)
+            embed.add_field(name="!Unload 'cog'", value="Se descargará el cog.", inline=False)
+            embed.add_field(name="!Mreload", value="Recarga todos los cogs del bot de musica.", inline=False)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
 
             await ctx.send(embed=embed)
 
         elif argum.lower() == "música" or argum.lower() == "musica" or argum.lower() == "music":
             embed=discord.Embed(title="Ayuda de música", description="Comandos disponibles:", color=0xC70039)
-            embed.add_field(name="!Conectar", value="Conecta Musicadictos a tu canal actual", inline=False)
-            embed.add_field(name="!Desconectar", value="Desconecta Musicadictos de tu canal actual", inline=False)
-            embed.add_field(name="!Play [Link o búsqueda de YT]", value="Reproduce la canción/lista especificada", inline=False)
-            embed.add_field(name="!Pausa", value="Pausa la canción actual", inline=False)
-            embed.add_field(name="!Stop", value="Para la música", inline=False)
-            embed.add_field(name="!Skip", value="Saltea la canción actual", inline=False)
-            embed.add_field(name="!Anterior", value="Reproduce la canción anterior", inline=False)
-            embed.add_field(name="!Repetir", value="Activa/desactiva el modo repetición", inline=False)
-            embed.add_field(name="!Cola", value="Te muestra la cola de música actual", inline=False)
+            embed.add_field(name="!Conectar", value="Conecta Musicadictos a tu canal actual.", inline=False)
+            embed.add_field(name="!Desconectar", value="Desconecta Musicadictos de tu canal actual.", inline=False)
+            embed.add_field(name="!Play [Link o búsqueda de YT]", value="Reproduce la canción/lista especificada.", inline=False)
+            embed.add_field(name="!Pausa", value="Pausa la canción actual.", inline=False)
+            embed.add_field(name="!Stop", value="Para la música.", inline=False)
+            embed.add_field(name="!Skip", value="Saltea la canción actual.", inline=False)
+            embed.add_field(name="!Anterior", value="Reproduce la canción anterior.", inline=False)
+            embed.add_field(name="!Repetir", value="Activa/desactiva el modo repetición.", inline=False)
+            embed.add_field(name="!Cola", value="Te muestra la cola de música actual.", inline=False)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
 
 
@@ -133,24 +140,28 @@ class Misc(commands.Cog):
     # Ping
 
     @commands.command(name="ping")
-    async def ping(self, ctx):
-            await ctx.send(f" Pong! {round(self.bot.latency * 1000)} ms")
+    async def ming(self, ctx):
+        ping = round(self.bot.latency * 1000)
+        embed = discord.Embed(title=f":ping_pong: Ping Bot: {ping}ms", colour=ctx.author.colour)
+        embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+        inline=False
+        await ctx.send(embed=embed)
 
 
     # Sugerencia
 
 
-    @commands.command(name="sugerencia", help="Envía tu sugerencia!", aliases=["Sugerencia","Sug","sug"])
+    @commands.command(name="sugerencia", help="Envía tu sugerencia", aliases=["Sugerencia","Sug","sug"])
     async def sugerencia(self,ctx, *, suge=None):
 
         from cogs.logs import sugchannel
 
         if ctx.channel.type is not discord.ChannelType.private:
-            await ctx.send("Escribime la sugerencia al privado!")
-            await ctx.author.send("Puedes enviar tu sugerencia por aquí.")
+            await ctx.send("Escribime la sugerencia al **privado**, utilizando '!sugerencia' seguido del mensaje")
+            await ctx.author.send("Puedes enviar tu sugerencia por aquí")
             return
         if suge == None:
-            await ctx.send("La sugerencia no puede estar vacía!")
+            await ctx.send("¡La sugerencia no puede estar vacía!")
             return
         suge = str(suge)
         channel=self.bot.get_channel(sugchannel)
@@ -160,7 +171,7 @@ class Misc(commands.Cog):
         mnsj = await channel.send(embed=embed)
         await mnsj.add_reaction("✅")
         await mnsj.add_reaction("❌")
-        await ctx.send("Sugerencia enviada!")
+        await ctx.send("¡La Sugerencia fue enviada!")
 
     # userinfo
 
@@ -212,7 +223,7 @@ class Misc(commands.Cog):
 
     @commands.command(name='host', aliases=["Host","hosting","Hosting"])
     async def host(self,ctx):
-        await ctx.send("Powered by https://billing.SparkedHost.com/aff.php?aff=1125 \n¿Querés tener tu propio servidor? ¡Usá el código \"Gtadictos21\" y obtené un 15\% de descuento!")
+        await ctx.send("Powered by https://gtadictos21.com/sparkedhost \n¿Querés tener tu propio servidor? ¡Usá el código \"Gtadictos21\" y obtené un 15\% de descuento!")
 
     @commands.command(name="eco", aliases=["echo","Echo","Eco"])
     @commands.has_permissions(kick_members = True)
@@ -226,7 +237,7 @@ class Misc(commands.Cog):
     @commands.command(name="reglas")
     @commands.has_permissions(manage_guild = True)
     async def reglas(self,ctx):
-        embed=discord.Embed(title="", description=" ")
+        embed=discord.Embed(title="", description=" ", color=0x00b7ff)
         embed.add_field(name="----------------", value="**Reglas\nSi no las recordas, aca las podes leer :)**.", inline=False)
         embed.add_field(name="----------------", value="<a:Pin:784983430713835521> Antes de nada, les dejo el [link del canal](https://www.youtube.com/c/gtadictos21) de Gtadictos 21", inline=False)
         embed.add_field(name="#1", value="<a:Desaprobado:784983048508276787> **NO** insultar, discriminar o faltar el respeto entre los miembros/staff.", inline=False)
@@ -246,7 +257,7 @@ class Misc(commands.Cog):
         embed.add_field(name="!nivel", value="Una vez que envíes algunos mensajes, usa este comando para conocer tu nivel.", inline=False)
         embed.add_field(name="!rank", value="Este comando muestra los 5 usuarios con más nivel en el servidor.", inline=False)
         embed.add_field(name="!botinfo", value="Este comando te muestra información extra acerca del bot, así como también, el código fuente!", inline=False)
-        embed.add_field(name="----------------", value="<a:Aprobado:784983108663246908> Recordá que nosotros nos guiamos por los [términos y condiciones de discord](https://www.discord.com/terms) y por las [directivas de la comunidad](https://www.discord.com/guidelines).", inline=False)
+        embed.add_field(name="----------------", value="<a:Aprobado:784983108663246908> Recordá que nosotros nos guiamos por los [términos y condiciones de Discord](https://www.discord.com/terms) y por las [directivas de la comunidad](https://www.discord.com/guidelines).", inline=False)
         welcome_message = await ctx.send(embed=embed)
 
     @commands.command(name="msginfo")
@@ -254,22 +265,28 @@ class Misc(commands.Cog):
     async def msginfo(self,ctx):
         await ctx.channel.send(f"Contexto: \"{ctx}\"\n\nContexto.message: \"{ctx.message}\"\n\nContenido\"{ctx.message.content}\"\n\n\"reply? {ctx.message.reference}\"")
 
+    @commands.command(name="imprimir")
+    @commands.has_permissions(manage_guild = True)
+    async def imprimir(self,ctx,mensaje):
+        print(f"mensaje:{mensaje} \nctx.message.content: {ctx.message.content}")
+
 
     @commands.command(name="reaccion",aliases=["Reaccion","react","React","Reacciones","reacciones"])
-    async def msginfo(self,ctx,*, mensaje:str=None):
+    async def reactor(self,ctx,*, mensaje:str=None):
         if mensaje == None:
-            await (await ctx.send("Enviá un mensaje!")).delete(delay=10)
+            await (await ctx.send("¡Enviá un mensaje!")).delete(delay=10)
             return
         if ctx.message.reference == None:
-            await (await ctx.send("Respondé al mensaje que querés que reaccione!")).delete(delay=10)
+            await (await ctx.send("¡Respondé al mensaje que querés que reaccione!")).delete(delay=10)
             return
 
         mensaje = mensaje.lower()
         mensaje = mensaje.replace(" ","")
         if len(mensaje) > 15:
-            await (await ctx.send("El mensaje no puede tener más de 15 carácteres!")).delete(delay=10)
+            await (await ctx.send("¡El mensaje no puede tener más de 15 carácteres!")).delete(delay=10)
             return
-        mensaje = unidecode(mensaje)
+        # original = mensaje
+        # mensaje = unidecode(mensaje)
 
         await (ctx.message).delete(delay=3)
 
@@ -310,6 +327,8 @@ class Misc(commands.Cog):
         '7': "7️⃣",
         '8': "8️⃣",
         '9': "9️⃣",
+        '!': "❗",
+        '?': "❓"
         }
 
         repetidas = set(i for i in mensaje if mensaje.count(i)>1)
@@ -317,7 +336,7 @@ class Misc(commands.Cog):
         for i in repetidas:
             lista.append(i)
         if len(repetidas) >= 1:
-            await (await ctx.send(f"El mensaje no puede contener letras repetidas!\nLetras repetidas:{lista}")).delete(delay=10)
+            await (await ctx.send(f"¡El mensaje no puede contener letras repetidas!\nLetras repetidas:{lista}")).delete(delay=10)
             return
 
         msg = await ctx.channel.fetch_message(ctx.message.reference.message_id)
@@ -325,11 +344,41 @@ class Misc(commands.Cog):
         for letra in mensaje:
             if letra == "ñ":
                 continue
-            await msg.add_reaction(letras_dict[letra])
+            try:
+                await msg.add_reaction(letra)
+            except:
+                pass
 
-
-
-    
+            try:
+                await msg.add_reaction(letras_dict[unidecode(letra)])
+            except:
+                pass
+            
+    @commands.command()       
+    @commands.guild_only()
+    async def serverinfo(self, ctx):
+        name = str(ctx.guild.name)
+        description = str(ctx.guild.description)
+        owner = str(ctx.guild.owner.mention)
+        id = str(ctx.guild.id)
+        region = str(ctx.guild.region)
+        memberCount = str(ctx.guild.member_count)
+        icon = str(ctx.guild.icon_url)
+        date = str("01/09/2021 20:06 PM GTM-3")
+        boost = int(ctx.guild.premium_tier)
+        locate = str(ctx.guild.preferred_locale)
+        
+        embed = discord.Embed(title="Informacion del servidor:", description=description, color=ctx.author.colour)    
+        embed.set_thumbnail(url=icon)
+        embed.add_field(name="**Dueño del servidor:**", value=owner, inline=False)
+        embed.add_field(name="**ID del servidor:**", value=id, inline=False)
+        embed.add_field(name="**Region del servidor:**", value=region, inline=False)
+        embed.add_field(name="**Lenguaje:**", value=locate, inline=False)
+        embed.add_field(name="**Cantidad total de miembros:**", value=memberCount, inline=False)
+        embed.add_field(name="**Fecha de creación:**", value=date, inline=False)
+        embed.add_field(name="**Nivel de Boost:**", value=boost, inline=False)
+        embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+        await ctx.send(embed=embed)  
 
 def setup(bot):
     bot.add_cog(Misc(bot))
