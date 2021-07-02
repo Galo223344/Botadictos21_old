@@ -10,10 +10,18 @@ import json
 from discord.ext import commands
 import discord
 from dotenv import load_dotenv
+import time
 
 # Cargamos el .env con los tokens
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+
+# Forzamos la zona de tiempo a argentina
+os.environ['TZ'] = 'America/Argentina/Buenos_Aires'
+time.tzset()
+print(time.strftime('%X %x %Z'))
+
+
 # Ponemos todos los intents de dicord (Porque los necesitamos)
 intents = discord.Intents.all()
 # Configuramos la instancia del bot
@@ -39,6 +47,23 @@ async def on_ready():
     # Cambia la actividad del bot a "viendo a Gtadictos21", url no funciona por limitación de Discord
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="a Gtadictos 21 | Usa !ayuda", url="https://youtube.com/c/gtadictos21"))
 
+
+print(os.path.exists('recordatorios.json'))
+
+if not os.path.exists('recordatorios.json'):
+    print("El archivo JSON de recordatorios no existe")
+    with open("recordatorios.json", 'a') as outarch:
+        print("Archivo creado supuestamente")
+        
+        objeto = {'usuarios':{}}
+        print(objeto)
+        print(outarch)
+        json.dump(objeto, outarch, indent=4)
+        print(outarch)
+        # print(outarch.read())
+        outarch.close()
+else:
+    print("El archivo JSON de recordatorios existe")
 
 # @bot.event
 # async def on_disconnect():
@@ -111,7 +136,7 @@ async def load(ctx, extension):
         return
     # Carga la extensión especificada
     bot.load_extension(f"cogs.{extension}")
-    await ctx.send(f"cogs.{extension} ha sido cargada")
+    await ctx.send(f"La extension cogs.**{extension}** ha sido cargada")
 
 @bot.command()
 async def unload(ctx, extension):
@@ -120,7 +145,7 @@ async def unload(ctx, extension):
         return
     # Descarga/apaga/deshabilita la extensión especidicada
     bot.unload_extension(f"cogs.{extension}")
-    await ctx.send(f"cogs.{extension} ha sido descargada")
+    await ctx.send(f"La extension cogs.**{extension}** ha sido descargada")
 
 @bot.command()
 async def reload(ctx,extension):
@@ -138,13 +163,13 @@ async def reload(ctx,extension):
             if filename.endswith('.py'):
                 bot.load_extension(f"cogs.{filename[:-3]}")
 
-        await ctx.send("Recargadas todas las extensiones")
+        await ctx.send("¡Todas las extensiones han sido recargadas!")
         return
     # Descargamos y cargamos la extension especifica
 
     bot.unload_extension(f"cogs.{extension}")
     bot.load_extension(f"cogs.{extension}")
-    await ctx.send(f"cogs.{extension} ha sido recargada")
+    await ctx.send(f"La extension cogs.**{extension}** ha sido recargada")
 
 # DEBUG: Imprime todos los emojis customizados de la guild en la consola. Especialmente útil para los emojis animados si no tenes discord nitro
 
