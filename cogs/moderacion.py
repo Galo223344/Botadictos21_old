@@ -57,10 +57,8 @@ class Moderacion(commands.Cog):
             embed=discord.Embed(title="¡Usuario no valido!", description="", color=0xff0000)
             embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
-            
-    @ban.error            
-    async def ban_error(self, ctx, error):
-        if isinstance(error, commands.MissingPermissions):
+
+        elif isinstance(error, commands.MissingPermissions):
             embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `BAN_MEMBERS`", color=0xff0000)
             embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
@@ -96,15 +94,13 @@ class Moderacion(commands.Cog):
         await channel.send(embed=embed)
 
     @kick.error
-    async def handler_ban(self, ctx,error):
+    async def handler_kick(self, ctx,error):
     	if isinstance(error, discord.ext.commands.errors.UserNotFound):
             embed=discord.Embed(title="¡Usuario no valido!", description="", color=0xff0000)
             embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
             
-    @kick.error            
-    async def handler_ban(self, ctx, error):
-        if isinstance(error, commands.MissingPermissions):
+        elif isinstance(error, commands.MissingPermissions):
             embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `KICK_MEMBERS`", color=0xff0000)
             embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)            
@@ -144,15 +140,13 @@ class Moderacion(commands.Cog):
         await channel.send(embed=embed)
 
     @silenciar.error
-    async def handler_ban(self, ctx,error):
+    async def handler_mute(self, ctx,error):
         if isinstance(error, discord.ext.commands.errors.UserNotFound):
             embed=discord.Embed(title="¡Usuario no valido!", description="", color=0xff0000)
             embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
             
-    @silenciar.error           
-    async def ban_error(self, ctx, error):
-        if isinstance(error, commands.MissingPermissions):
+        elif isinstance(error, commands.MissingPermissions):
             embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `MUTE_MEMBERS`", color=0xff0000)
             embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)            
@@ -191,15 +185,13 @@ class Moderacion(commands.Cog):
         await channel.send(embed=embed)
 
     @reactivar.error
-    async def handler_ban(self, ctx, error):
+    async def handler_unmute(self, ctx, error):
         if isinstance(error, discord.ext.commands.errors.UserNotFound):
             embed=discord.Embed(title="¡Usuario no valido!", description="", color=0xff0000)
             embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
-            
-    @reactivar.error            
-    async def ban_error(self, ctx, error):
-        if isinstance(error, commands.MissingPermissions):
+
+        elif isinstance(error, commands.MissingPermissions):
             embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `MANAGE_ROLES`", color=0xff0000)
             embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)            
@@ -227,7 +219,7 @@ class Moderacion(commands.Cog):
         await channel.send(embed=embed)
         
     @purge.error            
-    async def ban_error(self, ctx, error):
+    async def purge_error(self, ctx, error):
         if isinstance(error, commands.MissingPermissions):
             embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `MANAGE_GUILD`", color=0xff0000)
             embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
@@ -254,7 +246,7 @@ class Moderacion(commands.Cog):
         await ctx.send(embed=embed)
         
     @unban.error            
-    async def ban_error(self, ctx, error):
+    async def unban_error(self, ctx, error):
         if isinstance(error, commands.MissingPermissions):
             embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `BAN_MEMBERS`", color=0xff0000)
             embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
