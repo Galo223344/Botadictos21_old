@@ -169,14 +169,14 @@ class Logs(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_role_create(self, role):
         channel = self.bot.get_channel(logchannel)
-        embed=discord.Embed(title="Se ha creado un nuevo rol", color=0x2bff00)
+        embed=discord.Embed(title="Se ha creado un nuevo rol:", color=0x2bff00)
         embed.add_field(name= "Nombre:" ,value=role.name, inline=True)
         await channel.send(embed=embed)
 
     @commands.Cog.listener()
     async def on_guild_role_delete(self, role):
         channel = self.bot.get_channel(logchannel)
-        embed=discord.Embed(title="Se ha eliminado un rol", color=0xff0000)
+        embed=discord.Embed(title="Se ha eliminado un rol:", color=0xff0000)
         embed.add_field(name= "Nombre:" ,value=role.name, inline=True)
         await channel.send(embed=embed)
 
@@ -185,7 +185,7 @@ class Logs(commands.Cog):
 
 
         channel = self.bot.get_channel(logchannel)
-        embed=discord.Embed(title="Se ha editado un rol", color=0xff6600)
+        embed=discord.Embed(title="Se ha editado un rol:", color=0xff6600)
         embed.add_field(name= "Rol editado:" ,value=after.mention, inline=False)
 
         permisosa=[]
@@ -548,8 +548,12 @@ class Logs(commands.Cog):
     # logchannel
 
     @commands.command(name='logchannel', aliases=["logchan","Logchan","Logchannel"])
-    @commands.has_permissions(manage_guild = True)
     async def logchan(self, ctx):
+        if ctx.author.id not in admin_ids:
+            embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `BOT_OPERATOR`", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
+            return
         global logchannel
 
         logchannel = ctx.channel.id
@@ -567,8 +571,12 @@ class Logs(commands.Cog):
     # GVchannel
 
     @commands.command(name='gvchannel', aliases=["Gvchannel","gvchan","Gvchan"])
-    @commands.has_permissions(manage_guild = True)
     async def gvchan(self, ctx):
+        if ctx.author.id not in admin_ids:
+            embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `BOT_OPERATOR`", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
+            return
 
         global gvchannel
         gvchannel = ctx.channel.id
@@ -587,8 +595,12 @@ class Logs(commands.Cog):
     # Ignore
 
     @commands.command(name="ignore")
-    @commands.has_permissions(manage_guild = True)
     async def ignor(self, ctx):
+        if ctx.author.id not in admin_ids:
+            embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `BOT_OPERATOR`", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
+            return
         global ignorelist
 
         if ctx.channel.id in ignorelist:
@@ -612,8 +624,12 @@ class Logs(commands.Cog):
     # ignorelist
 
     @commands.command(name="ignorelist")
-    @commands.has_permissions(manage_guild = True)
     async def ignorlist(self,ctx):
+        if ctx.author.id not in admin_ids:
+            embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `BOT_OPERATOR`", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
+            return
         channelnames = []
         global ignorelist
         for i in ignorelist:
@@ -624,8 +640,12 @@ class Logs(commands.Cog):
     #sugchannel
 
     @commands.command(name='sugchannel', aliases=["Sugchannel","sugchan","Sugchan"])
-    @commands.has_permissions(manage_guild = True)
     async def sugchan(self, ctx):
+        if ctx.author.id not in admin_ids:
+            embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `BOT_OPERATOR`", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
+            return
 
         global sugchannel
         sugchannel = ctx.channel.id

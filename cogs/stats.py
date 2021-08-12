@@ -31,7 +31,6 @@ class Stats(commands.Cog):
         for server in servers:
             srv_id = str(server['attributes']['identifier'])
             utils.append(client.get_server_utilization(srv_id)['resources'])
-        
     
         embed = discord.Embed(title="Estadisticas del servidor:", description="", color=ctx.author.colour) 
         for util in utils:

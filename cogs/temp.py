@@ -28,17 +28,21 @@ class Temp(commands.Cog):
     @commands.command(name="tempban",aliases=["Tempban"])
     async def tempban(self, ctx, member:discord.User=None, tiempo=None, *, reason=None):
         if member == None or member == ctx.message.author:
-            await ctx.channel.send("¡Usuario no valido!")
+            embed=discord.Embed(title="¡Usuario no valido!", description="", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.channel.send(embed=embed)
             return
 
 
         banlist = []
 
         if tiempo == None:
-            await ctx.send("Porfavor especifica un tiempo de la siguiente manera: `1m 1h 1d`")
+            embed=discord.Embed(title="Por favor, especifica un tiempo de la siguiente manera:", description="`1m 1h 1d`", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
             return
         if reason == None:
-            reason = "Sin razón especificada."
+            reason = "La razón no ha sido especificada."
 
         
 
@@ -83,7 +87,9 @@ class Temp(commands.Cog):
 
 
         if minutos <= 0 and horas <= 0 and dias <= 0:
-            await ctx.send("¡Tiempo invalido!")
+            embed=discord.Embed(title="¡Tiempo invalido!", description="", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.channel.send(embed=embed)
             return
 
         # print(f"dias = {dias}")
@@ -96,9 +102,10 @@ class Temp(commands.Cog):
         banlist.append(f"{member.id};{tiempodevuelta};{ctx.guild.id}")
         # print("agregado el primer valor a banlist")
         tiempo_formateado = tiempodevuelta.strftime("%d/%m/%Y %H:%M")
-        reason = reason + f" Baneo efectuado por **{ctx.message.author.name}**. Expira el: {tiempo_formateado}"
-        message = f"Has sido baneado temporalmente de **{ctx.guild.name}** por la siguente razón: {reason}"
-        await member.send(message)
+        embed=discord.Embed(title=f"Has sido baneado temporalmente de {ctx.guild.name} por la siguiente razón:", description=f"{reason}", color=0x008080)
+        embed.add_field(name="Puedes apelar al baneo aquí:", value="Haz [click aquí](https://gtadictos21.com/apelacion-ban) para rellenar el formulario de apelaciones.", inline=True)
+        embed.set_footer(text=f" Baneo efectuado por {ctx.message.author.name}. Expira el dia: {tiempo_formateado}.", icon_url=ctx.author.avatar_url)
+        await member.send(embed=embed)
 
         with open('tempban.txt', 'r') as file:
             for line in file:
@@ -112,7 +119,9 @@ class Temp(commands.Cog):
             for i in banlist:
                 ofile.write(f"{i.strip()} \n")
             # print("terminado segundo for loop")
-        await ctx.send(f"El usuario **{member.name}** ha sido baneado y será desbaneado el {tiempo_formateado}")
+        embed=discord.Embed(title=f"El usuario {member.name} ha sido baneado, y será desbaneado el dia: ", description=f"{tiempo_formateado}", color=0x008080)
+        embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+        await ctx.send(embed=embed)
         await ctx.guild.ban(member, reason=reason)
 
 
@@ -130,21 +139,27 @@ class Temp(commands.Cog):
     @commands.command(name="tempmute",aliases=["Tempmute"])
     async def tempmute(self, ctx, member:discord.Member=None, * , tiempo=None,):
         if member == None or member == ctx.message.author:
-            await ctx.channel.send("¡Usuario no valido!")
+            embed=discord.Embed(title="¡Usuario no valido!", description="", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.channel.send(embed=embed)
             return
 
         Role = discord.utils.get(member.guild.roles, name="Silenciado")
         role2 = discord.utils.get(member.guild.roles, name="La People👤")
         
         if Role in member.roles:
-            await ctx.send("El usuario ya está silenciado")
+            embed=discord.Embed(title="¡El usuario ya se encuentra silenciado!", description="", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
             return
 
 
         mutelist = []
 
         if tiempo == None:
-            await ctx.send("Porfavor especifica un tiempo de la siguiente manera: `1m 1h 1d`")
+            embed=discord.Embed(title="Por favor, especifica un tiempo de la siguiente manera:", description="`1m 1h 1d`", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
             return
 
         tiempo = tiempo.replace(" ","")
@@ -191,7 +206,9 @@ class Temp(commands.Cog):
         # print(f"minutos = {minutos}")
 
         if minutos == 0 and horas == 0 and dias == 0:
-            await ctx.send("¡Tiempo invalido!")
+            embed=discord.Embed(title="¡Tiempo invalido!", description="", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
             return
 
 
@@ -215,7 +232,9 @@ class Temp(commands.Cog):
         await member.add_roles(Role)
         await member.remove_roles(role2)
 
-        await ctx.send(f"El usuario **{member.name}** ha sido muteado y será desmuteado el {tiempo_formateado}")
+        embed=discord.Embed(title=f"El usuario {member.name} ha sido muteado, y será desmuteado el dia: ", description=f"{tiempo_formateado}", color=0x008080)
+        embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+        await ctx.send(embed=embed)
 
     @tasks.loop(minutes=1)
     async def tiempocheck(self):
@@ -240,11 +259,14 @@ class Temp(commands.Cog):
                     channel=self.bot.get_channel(logchannel)
                     try:
                         await guild.unban(usuario, reason="Expiró el ban temporal")
-                        embed=discord.Embed(title="A expirado un tempban.", color=0x2bff00)
+                        embed=discord.Embed(title="Un usuario ha sido desbaneado:", color=0x2bff00)
                         embed.add_field(name= "Usuario desbaneado:" ,value=usuario.name, inline=True)
                         await channel.send(embed=embed)
                     except:
-                        await channel.send(f"El tempban de **{usuario}** ha fallado. Esto puede deberse a que el usuario fue desbaneado antes de que expirara el baneo temporal o por alguna otra razón. Si el usuario sigue baneado deberian desbanearlo. <@388924384016072706>")
+                        embed=discord.Embed(title="Un tempban ha fallado:", description="", color=0xff0000)
+                        embed.add_field(name=f"El tempban del usuario: {usuario} ha fallado.", value="Esto puede deberse a que el usuario fue desbaneado antes de que expirara el baneo temporal o por alguna otra razón. Si el usuario sigue baneado deberian desbanearlo.", inline=True)
+                        await channel.send(embed=embed)
+                        # await channel.send(f"El tempban de **{usuario}** ha fallado. Esto puede deberse a que el usuario fue desbaneado antes de que expirara el baneo temporal o por alguna otra razón. Si el usuario sigue baneado deberian desbanearlo. <@388924384016072706>") "<@&750491866570686535>"
 
         with open("tempban.txt",'w') as ofile:
             for i in unbanlist:
@@ -283,9 +305,9 @@ class Temp(commands.Cog):
                     channel=self.bot.get_channel(logchannel)
                     # print("dect5")
                     if Role not in member.roles:
-                        # print("dect5.1")
-                        await channel.send(f"Error de tempmute. El usuario **{member.name}** no está silenciado")
-                        # print("dect5.2")
+                        embed=discord.Embed(title="Error de tempmute:", description=f"El usuario {member.name} no se encuentra silenciado.", color=0xff0000)
+                        embed.set_thumbnail(url=member.avatar_url)
+                        await channel.send(embed=embed)
                         continue
 
                     print("Agregado rol la people")
@@ -297,9 +319,9 @@ class Temp(commands.Cog):
                     await member.remove_roles(Role)
 
                     # print("dect6")
-                    embed=discord.Embed(title="A expirado un tempmute. ", color=0x2bff00)
+                    embed=discord.Embed(title="Un usuario ha sido desbaneado:", color=0x2bff00)
                     # print("dect7")
-                    embed.add_field(name= "Usuario desmuteado:" ,value=member.name, inline=True)
+                    embed.add_field(name="Usuario desmuteado:" ,value=member.name, inline=True)
                     embed.set_thumbnail(url=member.avatar_url)
                     # print("dect8")
                     await channel.send(embed=embed)

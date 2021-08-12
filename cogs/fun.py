@@ -12,10 +12,10 @@ class Fun(commands.Cog):
     global insultos
     global caritas
     callate_r=["callate","cerra el orto","cerra el culo","quien te pregunto"]
-    insultos_r=["puta","trolo","conchudo","gil","tonto","estupido","tarado","imbecil","bot de ","hijo de ","puto","pelotudo","gei","gey","gay","culiao","culiado","cara de"]
-    insultos=["Que dijiste gil?","Queri piliar quliao?!",":\'(","Heriste mis sentimientos","!tempmute 5m Por insultar al bot"]
+    insultos_r=["puta","trolo","conchudo","gil","tonto","estupido","tarado","imbecil","bot de ","hijo de ","puto","pelotudo","gei","gey","gay","culiao","culiado","cara de","puta","retrasado","mogolico","hijo de puta","hacete coger","hermoso","lindo"]
+    insultos=["¿Que dijiste gil?","Queri piliar quliao?!",":\'(","Heriste mis sentimientos","!tempmute 5m Por insultar al bot"]
     callate=["Callate vos >:(","Bueno T_T","Mirá que te baneo eh\n!ban","Ño >:)"]
-    caritas=[":)",";)","uwu","owo"]
+    caritas=[":)",";)","uwu","owo","¯\_(ツ)_/¯",":D"]
 
     @commands.Cog.listener()
     async def on_ready(self):

@@ -13,13 +13,13 @@ class ranks(commands.Cog):
 
 
 
-    @commands.command(name="rank",aliases=["Rank","ranking","Ranking"])
+    @commands.command(name="top",aliases=["Rank","ranking","Ranking","rank"])
     async def rank(self,ctx):
         with open('users.json', 'r') as f:
             data = json.load(f)
 
         leaderboard = get_top_experience(data)
-        embed = discord.Embed(title='Tabla de posiciones', description='Ranking de experiencia de todos los usuarios', color=0xff5555)
+        embed = discord.Embed(title='Tabla de posiciones:', description='Ranking de experiencia de todos los usuarios', color=0xff5555)
         embed.add_field(name='**#1**', value=leaderboard[0], inline=False)
         embed.add_field(name='**#2**', value=leaderboard[1], inline=False)
         embed.add_field(name='**#3**', value=leaderboard[2], inline=False)

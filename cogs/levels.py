@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from __main__ import admin_ids
 import json
 import random
 
@@ -44,13 +45,42 @@ class Levels(commands.Cog):
                 users = json.load(f)
             lvl = users[str(id)]['level']
             exp = users[str(id)]['experience']
-            await ctx.send(f'¡Sos nivel {lvl} y tenés {exp} puntos de experiencia!')
+            embed=discord.Embed(title=f"¡Eres nivel {lvl} y tienes {exp} puntos de experiencia!", description="", color=ctx.author.color)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
         else:
             id = member.id
             with open('users.json', 'r') as f:
                 users = json.load(f)
             lvl = users[str(id)]['level']
-            await ctx.send(f'¡{member} está en el nivel {lvl}!')
+            exp = users[str(id)]['experience']
+            embed=discord.Embed(title=f"¡El usuario {member} se encuentra en el nivel {lvl}!", description="", color=ctx.author.color)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
+
+    @commands.command(name="addxp", aliases=["xpadd","addXP","addexp"])
+    async def add_exp(self, ctx, cantidad: int, member: discord.Member = None):
+        if ctx.author.id not in admin_ids:
+            embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `BOT_OPERATOR`", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
+            return
+            
+        with open('users.json', 'r') as f:
+                users = json.load(f)
+
+        await update_data(self, users, member)
+        await add_experience(self, users, member, cantidad)
+        await level_up(self, users, member, ctx)
+
+        with open('users.json', 'w') as f:
+            json.dump(users, f, indent=4)
+
+        embed=discord.Embed(title=f"¡Se ha agregado {cantidad} puntos de experiencia al usuario {member}!", description="", color=0x008080)
+        embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+        await ctx.channel.send(embed=embed)
+
+
 
 
 async def update_data(self, users, user):

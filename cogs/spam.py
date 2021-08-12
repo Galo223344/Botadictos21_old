@@ -3,26 +3,42 @@ import asyncio
 from datetime import datetime
 from discord.ext import commands
 from cogs.logs import logchannel
+from __main__ import admin_ids
 
 
-# TODO: En teoría nada ;)
 
 
 class Spam(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    # Cargamos la lista de spam en la variable listaspam
+    global listaspam
+    listaspam = list()
+    with open("spamlist.txt", "r") as archivo:
+        for linea in archivo.readlines():
+            listaspam.append(linea[:-1])
+    print("Spamlist.txt ha sido cargada")
     @commands.Cog.listener()
     async def on_ready(self):
         print ("spam cog is ready")
 
     @commands.Cog.listener()
     async def on_message(self, message):
+
         # Si el mensaje fue enviado por mensaje privado nos chupa un huevo
         if message.channel.type is discord.ChannelType.private:
             return
+
+
+        # La verdad no se porque hay que hacer esto, pero un día dejó de funcionar lol
+        guild = message.guild
+        member = guild.get_member(message.author.id)
+
+        
         # Revisamos si el que envió el mensaje es un mod/admin
-        if message.author.guild_permissions.kick_members:
+        if member.guild_permissions.kick_members:
+            # print("lo es")
             return
 
         mensaje_procesado2 = []
@@ -40,7 +56,7 @@ class Spam(commands.Cog):
 
         for sublist in mensaje_procesado2:
             for item in sublist:
-                mensaje_procesado.append(item)
+                mensaje_procesado.append(item.replace("|",""))
 
 
         # print(mensaje_procesado)
@@ -68,19 +84,20 @@ class Spam(commands.Cog):
                 if mensaje_procesado[mensaje_procesado.index("discord.gg")+1] in codigos:
                     # print("No es spam")
                     return
-                elif mensaje_procesado[mensaje_procesado.index("discord.gg")+1] == gtadictos21:
+                elif mensaje_procesado[mensaje_procesado.index("discord.gg")+1] == "gtadictos21":
                     return
                 else:
                     # Si no lo está, significa que es una invitación de otro servidor. Así que avisamos al usuario y eliminamos el mensaje
-                    warn = await message.channel.send(f"{message.author.mention}, por favor evita enviar invitaciones de otros servers de discord :)")
+                    embed=discord.Embed(title="Por favor, evitá enviar invitaciones de otros servidores de Discord :D", description="", color=0xff0000)
+                    embed.set_footer(text=f"Este es un mensaje automatico, si crees que se envió por error, reportalo.", icon_url=self.bot.user.avatar_url)
+                    await message.author.send(message.author.mention, embed=embed)
                     await message.delete()
                     channel = self.bot.get_channel(logchannel)
-                    embed=discord.Embed(title=f"{message.author.mention} Trató de enviar una invitación a otro servidor", timestamp= datetime.now(), color=0x804000)
+                    embed=discord.Embed(title=f" El usuario {message.author} trató de enviar una invitación a otro servidor.", timestamp= datetime.now(), color=0x804000)
                     embed.add_field(name="Mensaje original:", value=message.content, inline=False)
                     embed.set_thumbnail(url=message.author.avatar_url)
                     await channel.send(embed=embed)
                     await asyncio.sleep(15)
-                    await warn.delete()
                     return
 
             # Comenzamos el checkeo de discord.com
@@ -91,38 +108,73 @@ class Spam(commands.Cog):
                     return
                 else:
                     # Si no lo está, significa que es una invitación de otro servidor. Así que avisamos al usuario y eliminamos el mensaje
-                    warn = await message.channel.send(f"{message.author}, por favor evita enviar invitaciones de otros servers de discord :)")
+                    embed=discord.Embed(title="Por favor, evitá enviar invitaciones de otros servidores de Discord :D", description="", color=0xff0000)
+                    embed.set_footer(text=f"Este es un mensaje automatico, si crees que se envió por error, reportalo.", icon_url=self.bot.user.avatar_url)
+                    await message.author.send(message.author.mention, embed=embed)
+                    await message.delete()
                     await message.delete()
                     channel = self.bot.get_channel(logchannel)
-                    embed=discord.Embed(title=f"{message.author.mention} Trató de enviar una invitación a otro servidor", timestamp= datetime.now(), color=0x400080)
+                    embed=discord.Embed(title=f" El usuario {message.author} trató de enviar una invitación a otro servidor.", timestamp= datetime.now(), color=0x400080)
                     embed.add_field(name="Mensaje original:", value=message.content, inline=False)
                     embed.set_footer(text=datetime.now())
                     embed.set_thumbnail(url=message.author.avatar_url)
                     await channel.send(embed=embed)
                     await asyncio.sleep(15)
-                    await warn.delete()
                     return
 
-        if "streancommunuty.ru" in mensaje_procesado: # "steancomunnity.ru" or "steamcommuinityi.com" or "steamconmmunnltyi.com" or "bit-skins.ru"
-            # print("encontrado steam fake")
-            await message.delete()
-            reason = "Baneado automatico por spam engañoso, apelar a **contacto@gtadictos21.com**"
-            reason = reason + f"; Baneo efectuado por Bot - Accion automatica"
-            mensaje = f"Has sido baneado de {message.guild.name} por la siguente razón: \"{reason}\""
+        for spam in listaspam:
+            # print(spam)
+            if spam in mensaje_procesado:
+                # print(f"{spam} encontrado en mensaje")
+                await message.delete()
+                embed=discord.Embed(title="Ese tipo de links están prohibidos. Por favor, comunicate con los administradores para ser desmuteado.", description="Haz click [aquí](https://Gtadictos21.com/discord) para contactarlos.", color=0xff0000)
+                embed.set_footer(text=f"Este es un mensaje automatico, si crees que se envió por error, reportalo.", icon_url=self.bot.user.avatar_url)
+                await message.author.send(message.author.mention, embed=embed)
+
+
+                Role = discord.utils.get(member.guild.roles, name="Silenciado")
+                role2 = discord.utils.get(member.guild.roles, name="La People👤")
+                await member.add_roles(Role)
+                await member.remove_roles(role2)
+
+                channel = self.bot.get_channel(logchannel)
+                embed=discord.Embed(title=f" El usuario {message.author} envió un link engañoso y fue muteado automaticamente.", timestamp= datetime.now(), color=0x804000)
+                embed.add_field(name="Mensaje original:", value=message.content, inline=False)
+                embed.set_thumbnail(url=message.author.avatar_url)
+                await channel.send(embed=embed)
+                return
+
+    # Escribe links en spamlist.txt
+    @commands.command(name="add")
+    async def add(self, ctx, arg = None):
+        if ctx.author.id not in admin_ids:
+
+            embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `BOT_OPERATOR`", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
+            return
             
-            try:
-                await message.author.send(mensaje)
-            except:
-                pass
+        if arg == None:
+            embed=discord.Embed(title="¡Argumento inválido!", description=f"", color=0x008080)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
+            return
 
-            channel = self.bot.get_channel(logchannel)
-            embed=discord.Embed(title=f"{message.author} Envió un mensaje de engañoso y fue baneado automaticamente", timestamp= datetime.now(), color=0x804000)
-            embed.add_field(name="Mensaje original:", value=message.content, inline=False)
-            embed.set_thumbnail(url=message.author.avatar_url)
-            await channel.send(embed=embed)
 
-            await message.channel.send(f"{message.author} fue baneado automaticamente por spam.")
-            await message.guild.ban(message.author, reason=reason)
+        with open('spamlist.txt','a') as file:
+            file.write(f"{arg}\n")
+            print(f'¡El link "{arg}" ha sido agregado a la lista de spam!')
+        
+        embed=discord.Embed(title="¡Un nuevo link ha sido agregado a la lista de spam!", description=f"Link agregado: {arg} ", color=0x008080)
+        embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+        await ctx.send(embed=embed)        
+
+    @add.error
+    async def add_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `BOT_OPERATOR`", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
 
             
 

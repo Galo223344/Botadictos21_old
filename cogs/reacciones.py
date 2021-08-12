@@ -6,6 +6,7 @@ from discord.ext import commands
 from datetime import datetime, timedelta
 from cogs.logs import logchannel
 import random
+from __main__ import admin_ids
 
 
 # TODO: Comentar el codigo. Cambiar emojis por los del club de los 21
@@ -89,14 +90,22 @@ class Reactions(commands.Cog):
 
 
     @commands.command(name="sorteo", aliases=["Sorteo","sort","Sort","gv","GV","giveaway","Giveaway"])
-    @commands.has_permissions(manage_guild = True)
     async def giveaway(self, ctx, tiempo = None, cant_ganadores = None, nombre = None, *, desc = None):
+        if ctx.author.id not in admin_ids:
+            embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `BOT_OPERATOR`", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
+            return
 
         from cogs.logs import gvchannel
 
 
         if tiempo == None or cant_ganadores == None or nombre == None or desc == None:
-            await ctx.send("Uso del comando: `!sorteo tiempo(1h o 1d) ganadores(Cantidad de ganadores) nombre(Nombre del sorteo) desc(Descripción del sorteo)`")
+            
+            embed=discord.Embed(title="¡Uso invalido!", description="", color=0xff0000)
+            embed.add_field(name="Uso del comando:", value="`!sorteo Tiempo(1h/1d/1m) Ganadores(Cantidad de ganadores) Nombre(Nombre del sorteo) Descripción(Descripción del sorteo)`", inline=True)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
             return
 
         cant_ganadores = int(cant_ganadores)
@@ -141,7 +150,9 @@ class Reactions(commands.Cog):
             dias = 0
 
         if minutos == 0 and horas == 0 and dias == 0:
-            await ctx.send("Tiempo invalido")
+            embed=discord.Embed(title="¡Tiempo invalido!", description="", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
             return
 
         tiempofinal = datetime.now().replace(microsecond=0,second=0) + timedelta(minutes=minutos,hours=horas,days=dias)
@@ -156,10 +167,10 @@ class Reactions(commands.Cog):
 
         tadaa = self.bot.get_emoji(784983720226193428)
 
-        embed=discord.Embed(title="¡Nuevo sorteo!", description=f"Creado por {ctx.message.author.mention}")
+        embed=discord.Embed(title="¡Nuevo sorteo!", description=f"Creado por: {ctx.message.author.mention}")
         embed.add_field(name=str(nombre), value=str(desc), inline=False)
-        embed.add_field(name="Cantidad de ganadores", value=cant_ganadores, inline=False)
-        embed.set_footer(text=f"Finaliza el {tiempo_formateado}, reacciona con 🎉 para entrar!")
+        embed.add_field(name="Cantidad de ganadores:", value=cant_ganadores, inline=False)
+        embed.set_footer(text=f"Finaliza el dia: {tiempo_formateado}, reacciona con 🎉 para entrar!")
 
         channel=self.bot.get_channel(gvchannel)
         message = await channel.send("@everyone ¡Nuevo sorteo!", embed=embed)
@@ -167,10 +178,10 @@ class Reactions(commands.Cog):
 
 
         lchannel = self.bot.get_channel(logchannel)
-        embed=discord.Embed(title="Nuevo sorteo", description=f"Creado por {ctx.message.author.mention}", color=0xff6600)
+        embed=discord.Embed(title="Nuevo sorteo", description=f"Creado por: {ctx.message.author.mention}", color=0xff6600)
         embed.add_field(name=str(nombre), value=str(desc), inline=False)
         embed.add_field(name="Cantidad de ganadores: ", value=cant_ganadores, inline=False)
-        embed.set_footer(text=f"Finaliza el {tiempo_formateado}.")
+        embed.set_footer(text=f"Finaliza el dia: {tiempo_formateado}.")
         embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
         await lchannel.send(embed=embed)
 
@@ -187,16 +198,16 @@ class Reactions(commands.Cog):
 
         if len(dict_gv[message.id]) == 0 or len(dict_gv[message.id]) < cant_ganadores:
             if len(dict_gv[message.id]) == 0:
-                await ctx.send(f"\"{nombre}\": El sorteo finalizó sin ningun participante")
+                await ctx.send(f"\"{nombre}\": El sorteo finalizó sin ningun participante.")
                 del dict_gv[message.id]
                 lchannel = self.bot.get_channel(logchannel)
-                embed=discord.Embed(title=f"El sorteo \"{nombre}\" finalizó incorrectamente", description="No hubo participantes", color=0xff6600)
+                embed=discord.Embed(title=f"El sorteo \"{nombre}\" finalizó incorrectamente", description="Razón: No hubo suficientes participantes.", color=0xff0000)
 
             else:
                 await ctx.send(f"\"{nombre}\": No hubo suficientes participantes para la cantidad de premios disponibles. {ctx.message.author.mention}")
                 del dict_gv[message.id]
                 lchannel = self.bot.get_channel(logchannel)
-                embed=discord.Embed(title=f"El sorteo \"{nombre}\" finalizó incorrectamente", description="No hubo suficientes participantes", color=0xff6600)
+                embed=discord.Embed(title=f"El sorteo \"{nombre}\" finalizó incorrectamente", description="Razón: No hubo suficientes participantes.", color=0xff6600)
 
             await lchannel.send(embed=embed)
 
@@ -222,20 +233,27 @@ class Reactions(commands.Cog):
 
         for i in ganadores:
             ganador = ctx.guild.get_member(int(i))
-            await ctx.send(f"Felicidades {ganador.mention} por ganar el sorteo \"{nombre}\"! {ctx.message.author.mention} se va a comunicar con vos brevemente")
-            await ganador.send(f"**Felicidades, {ganador.mention}! 🎉 Acabas de ganar el sorteo \"{nombre}\". En las proximas horas, Gtadictos21 se va a comunicar con vos para entregarte el premio!**")
-
+            embed=discord.Embed(title="¡Felicidades!", description=f"¡El usuario {ganador.mention} ha ganado el sorteo \"{nombre}\"!", color=0x008080)
+            embed.add_field(name=f"En las proximas horas:", value=f"{ctx.message.author.mention} se va a comunicar contigo.", inline=True)
+            await channel.send(embed=embed)
+            embed=discord.Embed(title="¡Felicidades!", description="", color=0x008080)
+            embed.add_field(name=f"🎉 ¡Acabas de ganar el sorteo \"{nombre}\"!", value="En las proximas horas, Gtadictos21 se va a comunicar con vos para entregarte el premio. 🎉", inline=True)
+            await ganador.send(embed=embed)
 
 
         del dict_gv[message.id]
 
         lchannel = self.bot.get_channel(logchannel)
-        embed=discord.Embed(title=f"El sorteo {nombre} finalizó correctamente", description="Asegurense de contactar a los ganadores", color=0xff6600)
+        embed=discord.Embed(title=f"El sorteo {nombre} finalizó correctamente.", description="¡Asegurense de contactar a los ganadores!", color=0x008080)
         await lchannel.send(embed=embed)
 
     @commands.command(name="resorteo")
-    @commands.has_permissions(manage_guild = True)
     async def resorteo(self,ctx,m_id):
+        if ctx.author.id not in admin_ids:
+            embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `BOT_OPERATOR`", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
+            return
         msg = await ctx.fetch_message(int(m_id))
         usuarios = []
         users = set()
@@ -258,7 +276,9 @@ class Reactions(commands.Cog):
                     break
 
 
-        await ctx.send(f"RESORTEO.\nEl ganador del resorteo es \"{eleccion.mention}\"")
+        embed=discord.Embed(title="Se ha realizado un resorteo:", description=f"El nuevo ganador es \"{eleccion.mention}\"", color=0x008080)
+        await ctx.send(embed=embed)
+        
 
 
 
@@ -269,8 +289,12 @@ class Reactions(commands.Cog):
     #     pass
 
     @commands.command(name="init")
-    @commands.has_permissions(manage_guild = True)
     async def init(self,ctx):
+        if ctx.author.id not in admin_ids:
+            embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `BOT_OPERATOR`", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
+            return
         embed=discord.Embed(title="", description=" ", color=0x00b7ff)
         embed.add_field(name="¡Hacé click en el emoji!", value="¡Hacé click en el emoji <a:Thumbup:792171608323260416> para poder acceder al servidor! ", inline=False)
         welcome_message = await ctx.send(embed=embed)

@@ -55,4 +55,4 @@ class Config():
         return len(cfg['config']['YouTubers'])
 
 def setup(bot):
-    print("sas")
+    print("YTconfig")

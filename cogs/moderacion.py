@@ -23,22 +23,28 @@ class Moderacion(commands.Cog):
     @commands.has_permissions(ban_members=True)
     async def ban (self, ctx, member:discord.Member=None, *,reason =None):
         if member == None or member == ctx.message.author:
-            await ctx.channel.send("¡Usuario no encontrado!")
+            embed=discord.Embed(title="¡Usuario no valido!", description="", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
             return
         if reason == None:
-            reason = "Sin razón especificada."
+            reason = "La razón no ha sido especificada."
 
-        reason = reason + f" Baneo efectuado por **{ctx.message.author}**"
-
-        message = f"Has sido baneado de **{ctx.guild.name}** por la siguente razón: {reason}"
+        embed=discord.Embed(title=f"Has sido baneado de {ctx.guild.name} por la siguiente razón:", description=reason, color=0x008080)
+        embed.add_field(name="Puedes apelar al baneo aquí:", value="Haz [click aquí](https://gtadictos21.com/apelacion-ban) para rellenar el formulario de apelaciones.", inline=True)
+        embed.set_footer(text=f"Baneo efectuado por: {ctx.message.author}", icon_url=ctx.author.avatar_url)
         
         try:
-        	await member.send(message)
+        	await member.send(embed=embed)
         except:
         	pass
+        
+        reason = reason + f"\nBaneo efectuado por {ctx.message.author}"
 
         await ctx.guild.ban(member, reason=reason)
-        await ctx.channel.send(f"¡**{member}** ha sido baneado!")
+        embed=discord.Embed(title=f"¡El usuario {member} ha sido baneado!", description="", color=0x008080)
+        embed.set_footer(text=f"Baneo efectuado por: {ctx.message.author.name}", icon_url=ctx.author.avatar_url)
+        await ctx.channel.send(embed=embed)
 
 
         # channel=self.bot.get_channel(logchannel)
@@ -48,8 +54,16 @@ class Moderacion(commands.Cog):
     @ban.error
     async def handler_ban(self, ctx,error):
     	if isinstance(error, discord.ext.commands.errors.UserNotFound):
-    		await ctx.send("¡Usuario no encontrado!")
-
+            embed=discord.Embed(title="¡Usuario no valido!", description="", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
+            
+    @ban.error            
+    async def ban_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `BAN_MEMBERS`", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
 
     # Kick
 
@@ -57,28 +71,43 @@ class Moderacion(commands.Cog):
     @commands.has_permissions(kick_members=True)
     async def kick (self, ctx, member:discord.Member=None, *,reason=None):
         if member == None or member == ctx.message.author:
-            await ctx.channel.send("¡Usuario no valido!")
+            embed=discord.Embed(title="¡Usuario no valido!", description="", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.channel.send(embed=embed)
             return
         if reason == None:
-            reason = "Sin razón especificada."
-        reason = reason + f" Kick efectuado por **{ctx.message.author}**"
-        message = f"Has sido expulsado de **{ctx.guild.name}** por la siguente razón: {reason}"
+            reason = "La razón no ha sido especificada."
+        embed=discord.Embed(title=f"Has sido expulsado de {ctx.guild.name} por la siguiente razón:", description=f"{reason}", color=0x008080)
+        embed.set_footer(text=f"Kick efectuado por: {ctx.message.author}", icon_url=ctx.author.avatar_url)
+        await member.send(embed=embed)
+
         try:
         	await member.send(message)
         except:
         	pass
         await ctx.guild.kick(member, reason=reason)
-        await ctx.channel.send(f"¡**{member}** ha sido expulsado!")
+        embed=discord.Embed(title=f"¡El usuario {member} ha sido expulsado!", description="", color=0x008080)
+        embed.set_footer(text=f"Kick efectuado por: {ctx.message.author.name}", icon_url=ctx.author.avatar_url)
+        await ctx.channel.send(embed=embed)
 
 
         channel=self.bot.get_channel(logchannel)
-        embed=discord.Embed(title=f"{ctx.author} ha expulsado a {member} por la siguiente razón: {reason}", color=0xff0000)
+        embed=discord.Embed(title=f"{ctx.author} ha expulsado al usuario {member} por la siguiente razón: {reason}", color=0x008080)
         await channel.send(embed=embed)
 
     @kick.error
     async def handler_ban(self, ctx,error):
     	if isinstance(error, discord.ext.commands.errors.UserNotFound):
-    		await ctx.send("¡Usuario no encontrado!")
+            embed=discord.Embed(title="¡Usuario no valido!", description="", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
+            
+    @kick.error            
+    async def handler_ban(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `KICK_MEMBERS`", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)            
 
     # Silenciar
 
@@ -89,21 +118,27 @@ class Moderacion(commands.Cog):
         role2 = discord.utils.get(member.guild.roles, name="La People👤")
 
         if member == None or member == ctx.message.author:
-            await ctx.channel.send("¡Usuario no valido!")
+            embed=discord.Embed(title="¡Usuario no valido!", description="", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.channel.send(embed=embed)
             return
         if reason == None:
-            reason = "Sin razon especificada"
+            reason = "La razón no ha sido especificada."
         if Role in member.roles:
-            await ctx.send("El usuario ya se encuentra silenciado")
+            embed=discord.Embed(title=f"¡El usuario {member} ya se encuentra silenciado!", description="", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
             return
 
         Role = discord.utils.get(member.guild.roles, name="Silenciado")
         await member.add_roles(Role)
-        await ctx.send("El usuario ha sido muteado")
+        embed=discord.Embed(title=f"¡El usuario {member} ha sido silenciado!", description="", color=0x008080)
+        embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+        await ctx.send(embed=embed)
         await member.remove_roles(role2)
 
         channel = self.bot.get_channel(logchannel)
-        embed=discord.Embed(title="Usuario silenciado", color=0xff0000)
+        embed=discord.Embed(title="Usuario silenciado:", color=0xff0000)
         embed.add_field(name= "Usuario silenciado:" ,value=member.mention, inline=False)
         embed.add_field(name= "Silenciado por:" ,value=ctx.message.author.mention, inline=False)
         await channel.send(embed=embed)
@@ -111,7 +146,16 @@ class Moderacion(commands.Cog):
     @silenciar.error
     async def handler_ban(self, ctx,error):
         if isinstance(error, discord.ext.commands.errors.UserNotFound):
-            await ctx.send("¡Usuario no valido!")
+            embed=discord.Embed(title="¡Usuario no valido!", description="", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
+            
+    @silenciar.error           
+    async def ban_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `MUTE_MEMBERS`", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)            
 
     # Des-Silenciar/Unmute
 
@@ -121,17 +165,23 @@ class Moderacion(commands.Cog):
         Role = discord.utils.get(member.guild.roles, name="Silenciado")
 
         if member == None or member == ctx.message.author:
-            await ctx.channel.send("¡Usuario no valido!")
+            embed=discord.Embed(title="¡Usuario no valido!", description="", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
             return
         if Role not in member.roles:
-            await ctx.send("El usuario no se encuentra silenciado")
+            embed=discord.Embed(title=f"¡El usuario {member} no se encuentra silenciado!", description="", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.channel.send(embed=embed)
             return
 
         Role = discord.utils.get(member.guild.roles, name="Silenciado")
         role2 = discord.utils.get(member.guild.roles, name="La People👤")
 
         await member.remove_roles(Role)
-        await ctx.send("El usuario ha sido desmuteado")
+        embed=discord.Embed(title=f"¡El usuario {member} ha sido desmuteado!", description="", color=0x008080)
+        embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+        await ctx.send(embed=embed)
         await member.add_roles(role2)
 
         channel = self.bot.get_channel(logchannel)
@@ -143,7 +193,16 @@ class Moderacion(commands.Cog):
     @reactivar.error
     async def handler_ban(self, ctx, error):
         if isinstance(error, discord.ext.commands.errors.UserNotFound):
-            await ctx.send("¡Usuario no encontrado!")
+            embed=discord.Embed(title="¡Usuario no valido!", description="", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
+            
+    @reactivar.error            
+    async def ban_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `MANAGE_ROLES`", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)            
 
     # Purgar
 
@@ -154,7 +213,9 @@ class Moderacion(commands.Cog):
             await ctx.send("._.")
             return
         if cantidad > 500:
-            await ctx.send("Se ha exedido el limite, el limite es de **500** mensajes")
+            embed=discord.Embed(title="¡Se ha excedido el limite de 500 mensajes!", description="", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
             return
         await ctx.channel.purge(limit=cantidad+1)
         aviso = await ctx.send(f'Se han eliminado {cantidad} mensajes por {ctx.author.mention}')
@@ -162,9 +223,15 @@ class Moderacion(commands.Cog):
         await aviso.delete()
 
         channel=self.bot.get_channel(logchannel)
-        embed=discord.Embed(title=f"{ctx.author} ha eliminado {cantidad} mensajes en {ctx.channel}", color=0xff0000)
+        embed=discord.Embed(title=f"{ctx.author} ha eliminado {cantidad} mensajes en {ctx.channel} utilizando el comando !purge", color=0xff0000)
         await channel.send(embed=embed)
-
+        
+    @purge.error            
+    async def ban_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `MANAGE_GUILD`", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)      
 
     # Unban
     @commands.has_permissions(ban_members=True)
@@ -177,13 +244,21 @@ class Moderacion(commands.Cog):
 
             if (user.name, user.discriminator) == (member_name, member_discriminator):
                 await ctx.guild.unban(user)
-                await ctx.send(f"¡**{user.name}#{user.discriminator}** ha sido desbaneado!")
+                embed=discord.Embed(title=f"¡El usuario {user.name}#{user.discriminator} ha sido desbaneado!", description="", color=0x008080)
+                embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+                await ctx.send(embed=embed)
                 return
 
-        await ctx.send("¡Usuario no baneado / Usuario no encontrado!")
-
-
-
+        embed=discord.Embed(title="¡Usuario no baneado / Usuario no encontrado!", description="", color=0xff0000)
+        embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+        await ctx.send(embed=embed)
+        
+    @unban.error            
+    async def ban_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `BAN_MEMBERS`", color=0xff0000)
+            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Moderacion(bot))
