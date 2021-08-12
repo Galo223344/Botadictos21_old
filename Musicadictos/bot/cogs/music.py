@@ -17,12 +17,17 @@ from PIL import Image
 import traceback
 from fast_colorthief import get_dominant_color as getCol
 import tekore as tk
+from math import ceil
 
 
 # Cargamos el .env con los tokens
 load_dotenv()
 SP_ID = os.getenv('SP_ID')
 SP_SECRET = os.getenv('SP_SECRET')
+
+
+# print(SP_ID)
+# print(SP_SECRET)
 
 app_token = tk.request_client_token(SP_ID, SP_SECRET)
 spotify = tk.Spotify(app_token)
@@ -471,27 +476,97 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         if "open.spotify.com" in query:
             link = query.split("/")
             if "playlist" in link:
-                await ctx.send("Procesando... ⚙️")
+                mensaje = await ctx.send("Procesando... ⚙️\n`[          ] %0`")
                 async with ctx.typing():
                     link = link[4].split("?")
                     link = link[0]
                     pl_id = link
                     # print(pl_id)
 
+                    pasado10 = False
+                    pasado9 = False
+                    pasado8 = False
+                    pasado7 = False
+                    pasado6 = False
+                    pasado5 = False
+                    pasado4 = False
+                    pasado3 = False
+                    pasado2 = False
+                    pasado1 = False
+
                     playlist = spotify.playlist_items(pl_id)
-                    playlist = spotify.all_items(playlist)
+                    playlist = list(spotify.all_items(playlist))
                     musicas = list()
                     canciones = list()
-                    for track in playlist:
+                    # temporaneo = (len(playlist))
+                    for idx,track in enumerate(playlist):
+
+                        # print(track)
+                        # print(idx)
+
+                        # print("LISTA")
+                        # print(temporaneo)
+                        prog = ceil((idx+1)/len(playlist)*100)
+                        # prog = 0
+                        # print(prog)
+                            
+                        if prog >= 100 and not pasado10:
+                            await mensaje.edit(content="Procesando... ⚙️\n`[▉▉▉▉▉▉▉▉▉▉] %100`")
+                            pasado10 = True
+                            
+                        elif prog >= 90 and not pasado9:
+                            await mensaje.edit(content="Procesando... ⚙️\n`[▉▉▉▉▉▉▉▉▉ ] %90`")
+                            pasado9 = True
+                            
+                        elif prog >= 80 and not pasado8:
+                            await mensaje.edit(content="Procesando... ⚙️\n`[▉▉▉▉▉▉▉▉  ] %80`")
+                            pasado8 = True
+                            
+                        elif prog >= 70 and not pasado7:
+                            await mensaje.edit(content="Procesando... ⚙️\n`[▉▉▉▉▉▉▉   ] %70`")
+                            pasado7 = True
+
+                        elif prog >= 60 and not pasado6:
+                            await mensaje.edit(content="Procesando... ⚙️\n`[▉▉▉▉▉▉    ] %60`")
+                            pasado6 = True
+
+                        elif prog >= 50 and not pasado5:
+                            await mensaje.edit(content="Procesando... ⚙️\n`[▉▉▉▉▉     ] %50`")
+                            pasado5 = True
+                            
+                        elif prog >= 40 and not pasado4:
+                            await mensaje.edit(content="Procesando... ⚙️\n`[▉▉▉▉      ] %40`")
+                            pasado4 = True
+                              
+                        elif prog >= 30 and not pasado3:
+                            await mensaje.edit(content="Procesando... ⚙️\n`[▉▉▉       ] %30`")
+                            pasado3 = True
+                            
+                        elif prog >= 20 and not pasado2:
+                            await mensaje.edit(content="Procesando... ⚙️\n`[▉▉        ] %20`")
+                            pasado2 = True
+                            
+                        elif prog >= 10 and not pasado1:
+                            await mensaje.edit(content="Procesando... ⚙️\n`[▉         ] %10`")
+                            pasado1 = True
+
+                        shave = mensaje.content[:(len(str(prog))+1)*-1]
+                        await mensaje.edit(content=f"{shave}{prog}`")
+
+
                         if track.track == None:
                             continue
                         cancion_formateada = f"{track.track.name} - {track.track.album.artists[0].name}"
-                        musicas.append(cancion_formateada)
                         cancion_objeto = await self.wavelink.get_tracks(f"ytsearch:{cancion_formateada} Audio")
+                        if cancion_objeto == None:
+                            continue
+                        musicas.append(cancion_formateada)
                         cancion_objeto = cancion_objeto[0]
                         cancion_objeto.thumb = f"https://i3.ytimg.com/vi/{cancion_objeto.ytid}/maxresdefault.jpg"
                         canciones.append(cancion_objeto)
 
+                #     print("agregada canción y loop iterado")
+                # print("loop terminado")
                 await player.add_tracks(ctx,"sp_p",(canciones,musicas))
 
 

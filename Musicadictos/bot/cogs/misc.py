@@ -8,7 +8,11 @@ class Misc(commands.Cog):
 
     @commands.command(name="mping")
     async def ming(self, ctx):
-            await ctx.send(f" Pong! {round(self.bot.latency * 1000)} ms")
-
+        ping = round(self.bot.latency * 1000)
+        embed = discord.Embed(title=f":ping_pong: Ping Bot: {ping}ms", colour=ctx.author.colour)
+        embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+        inline=False
+        await ctx.send(embed=embed)
+        
 def setup(bot):
     bot.add_cog(Misc(bot))
