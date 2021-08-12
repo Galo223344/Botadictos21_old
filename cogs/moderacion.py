@@ -35,9 +35,9 @@ class Moderacion(commands.Cog):
         embed.set_footer(text=f"Baneo efectuado por: {ctx.message.author}", icon_url=ctx.author.avatar_url)
         
         try:
-        	await member.send(embed=embed)
+            await member.send(embed=embed)
         except:
-        	pass
+            pass
         
         reason = reason + f"\nBaneo efectuado por {ctx.message.author}"
 
@@ -53,7 +53,7 @@ class Moderacion(commands.Cog):
 
     @ban.error
     async def handler_ban(self, ctx,error):
-    	if isinstance(error, discord.ext.commands.errors.UserNotFound):
+        if isinstance(error, discord.ext.commands.errors.UserNotFound):
             embed=discord.Embed(title="¡Usuario no valido!", description="", color=0xff0000)
             embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
@@ -80,9 +80,9 @@ class Moderacion(commands.Cog):
         await member.send(embed=embed)
 
         try:
-        	await member.send(message)
+            await member.send(message)
         except:
-        	pass
+            pass
         await ctx.guild.kick(member, reason=reason)
         embed=discord.Embed(title=f"¡El usuario {member} ha sido expulsado!", description="", color=0x008080)
         embed.set_footer(text=f"Kick efectuado por: {ctx.message.author.name}", icon_url=ctx.author.avatar_url)
@@ -95,7 +95,7 @@ class Moderacion(commands.Cog):
 
     @kick.error
     async def handler_kick(self, ctx,error):
-    	if isinstance(error, discord.ext.commands.errors.UserNotFound):
+        if isinstance(error, discord.ext.commands.errors.UserNotFound):
             embed=discord.Embed(title="¡Usuario no valido!", description="", color=0xff0000)
             embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
