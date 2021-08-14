@@ -91,16 +91,15 @@ class Misc(commands.Cog):
 
         embed=discord.Embed(title="Haz click para ver el codigo fuente", url="https://github.com/Galo223344/Botadictos21/", description="", color=0x2cdca3)
         for util in utils:
-            embed.add_field(name="Botadictos21 por:", value="<@388924384016072706>", inline=True)
-            embed.add_field(name="Musicadictos21 por:", value="<@503739646895718401>", inline=True)
-            embed.add_field(name="Para el servidor:", value="**El Club de los 21\'s**", inline=True)
-            embed.add_field(name="Hosteado en:", value="[Sparked Host](https://gtadictos21.com/sparkedhost)", inline=True)
-            embed.add_field(name="Estadisticas del servidor:", value="----------------", inline=False)
-            embed.add_field(name="**CPU:**", value=f"{util['cpu_absolute']}%", inline=True)
-            embed.add_field(name="**Memoria en uso:**", value=f"{math.ceil((util['memory_bytes']/1024)/1024)} MB", inline=True)
-            embed.add_field(name="**Espacio en uso:**", value=f"{math.ceil((util['disk_bytes']/1024)/1024)} MB", inline=True)
-            embed.set_thumbnail(url=self.bot.user.avatar_url)
-            embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+	        embed.add_field(name="Botadictos21 por:", value="<@388924384016072706>", inline=True)
+	        embed.add_field(name="Musicadictos21 por:", value="<@503739646895718401>", inline=True)
+	        embed.add_field(name="Para el servidor:", value="**El Club de los 21\'s**", inline=True)
+	        embed.add_field(name="Hosteado en:", value="[Sparked Host](https://gtadictos21.com/sparkedhost)", inline=True)
+	        embed.add_field(name="**CPU:**", value=f"{util['cpu_absolute']}%/60%", inline=True)
+	        embed.add_field(name="**Memoria en uso:**", value=f"{math.ceil((util['memory_bytes']/1024)/1024)}MB/512MB", inline=True)
+	        embed.add_field(name="**Espacio en uso:**", value=f"{math.ceil((util['disk_bytes']/1024)/1024)}MB/10GB", inline=True)
+	        embed.set_thumbnail(url=self.bot.user.avatar_url)
+	        embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
 
     # Ayuda
