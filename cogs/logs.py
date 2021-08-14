@@ -630,13 +630,17 @@ class Logs(commands.Cog):
             embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
             return
+            
         channelnames = []
         global ignorelist
         for i in ignorelist:
-            nameee = self.bot.get_channel(i)
-            channelnames.append(nameee.name)
-        await ctx.send(f"`{channelnames}`")
-
+            try:
+                nameee = self.bot.get_channel(i)
+                channelnames.append(nameee.name)
+            except:
+                pass
+        await ctx.send("```Canales ignorados por el bot:\n"+''.join(f"        • {i}\n" for i in channelnames)+"```")
+    
     #sugchannel
 
     @commands.command(name='sugchannel', aliases=["Sugchannel","sugchan","Sugchan"])
