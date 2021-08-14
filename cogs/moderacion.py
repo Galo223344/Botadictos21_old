@@ -1,5 +1,6 @@
 import discord
 import asyncio
+from datetime import datetime
 from discord.ext import commands
 from cogs.logs import logchannel
 
@@ -47,10 +48,6 @@ class Moderacion(commands.Cog):
         await ctx.channel.send(embed=embed)
 
 
-        # channel=self.bot.get_channel(logchannel)
-        # embed=discord.Embed(title=f"{ctx.author} ha baneado a {member} por la siguiente razón: {reason}", color=0x400040)
-        # await channel.send(embed=embed)
-
     @ban.error
     async def handler_ban(self, ctx,error):
         if isinstance(error, discord.ext.commands.errors.UserNotFound):
@@ -90,7 +87,9 @@ class Moderacion(commands.Cog):
 
 
         channel=self.bot.get_channel(logchannel)
-        embed=discord.Embed(title=f"{ctx.author} ha expulsado al usuario {member} por la siguiente razón: {reason}", color=0x008080)
+        embed=discord.Embed(title=f"El usuario {member} ha sido expulsado por la siguiente razón: {reason}", description=f"El moderador/administrador {ctx.author.mention} ha expulsado a {member.mention}.", timestamp= datetime.now(), color=0x008080)
+        embed.set_thumbnail(url=member.avatar_url)
+        embed.set_footer(text=f"ID del usuario: {member.id}") 
         await channel.send(embed=embed)
 
     @kick.error
@@ -134,9 +133,11 @@ class Moderacion(commands.Cog):
         await member.remove_roles(role2)
 
         channel = self.bot.get_channel(logchannel)
-        embed=discord.Embed(title="Usuario silenciado:", color=0xff0000)
-        embed.add_field(name= "Usuario silenciado:" ,value=member.mention, inline=False)
-        embed.add_field(name= "Silenciado por:" ,value=ctx.message.author.mention, inline=False)
+        embed=discord.Embed(title="Un usuario ha sido muteado:", timestamp= datetime.now(), color=0xff0000)
+        embed.add_field(name= "Usuario muteado:" ,value=member.mention, inline=False)
+        embed.add_field(name= "Muteado por:" ,value=ctx.message.author.mention, inline=False)
+        embed.set_thumbnail(url=member.avatar_url)
+        embed.set_footer(text=f"ID del usuario: {member.id}") 
         await channel.send(embed=embed)
 
     @silenciar.error
@@ -179,9 +180,11 @@ class Moderacion(commands.Cog):
         await member.add_roles(role2)
 
         channel = self.bot.get_channel(logchannel)
-        embed=discord.Embed(title="Usuario desmuteado", color=0x2bff00)
+        embed=discord.Embed(title="Un usuario ha sido desmuteado", timestamp= datetime.now(), color=0x2bff00)
         embed.add_field(name= "Usuario desmuteado:" ,value=member.mention, inline=False)
         embed.add_field(name= "Desmuteado por:" ,value=ctx.message.author.mention, inline=False)
+        embed.set_thumbnail(url=member.avatar_url)
+        embed.set_footer(text=f"ID del usuario: {member.id}")
         await channel.send(embed=embed)
 
     @reactivar.error
@@ -210,13 +213,15 @@ class Moderacion(commands.Cog):
             await ctx.send(embed=embed)
             return
         await ctx.channel.purge(limit=cantidad+1)
-        aviso = await ctx.send(f'Se han eliminado {cantidad} mensajes por {ctx.author.mention}')
-        await asyncio.sleep(15)
-        await aviso.delete()
+        aviso = await ctx.send(f'Se han eliminado {cantidad} mensaje(s) por {ctx.author.mention}')
 
         channel=self.bot.get_channel(logchannel)
-        embed=discord.Embed(title=f"{ctx.author} ha eliminado {cantidad} mensajes en {ctx.channel} utilizando el comando !purge", color=0xff0000)
+        embed=discord.Embed(title=f"Un moderador/administrador ha utilizado el comando '!purge':", description=f"{ctx.author.mention} ha eliminado {cantidad} mensaje(s) en el canal \"{ctx.channel}\".", timestamp= datetime.now(), color=0xff0000)
+        embed.set_thumbnail(url=ctx.author.avatar_url)
+        embed.set_footer(text=f"ID del usuario: {ctx.author.id}") 
         await channel.send(embed=embed)
+        await asyncio.sleep(15)
+        await aviso.delete()
         
     @purge.error            
     async def purge_error(self, ctx, error):
