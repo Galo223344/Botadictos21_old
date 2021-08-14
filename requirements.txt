@@ -1,0 +1,5 @@
+discord.py==1.7.3
+python-dotenv==0.19.0
+PyYAML==5.4.1
+py-dactyl==0.1.16
+unidecode==1.2.0
