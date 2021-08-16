@@ -96,6 +96,7 @@ class Spam(commands.Cog):
                     embed=discord.Embed(title=f" El usuario {message.author} trató de enviar una invitación a otro servidor.", timestamp= datetime.now(), color=0x804000)
                     embed.add_field(name="Mensaje original:", value=message.content, inline=False)
                     embed.set_thumbnail(url=message.author.avatar_url)
+                    embed.set_footer(text=f"ID del usuario: {message.author.id}")
                     await channel.send(embed=embed)
                     await asyncio.sleep(15)
                     return
@@ -116,8 +117,8 @@ class Spam(commands.Cog):
                     channel = self.bot.get_channel(logchannel)
                     embed=discord.Embed(title=f" El usuario {message.author} trató de enviar una invitación a otro servidor.", timestamp= datetime.now(), color=0x400080)
                     embed.add_field(name="Mensaje original:", value=message.content, inline=False)
-                    embed.set_footer(text=datetime.now())
                     embed.set_thumbnail(url=message.author.avatar_url)
+                    embed.set_footer(text=f"ID del usuario: {message.author.id}")
                     await channel.send(embed=embed)
                     await asyncio.sleep(15)
                     return
@@ -127,7 +128,7 @@ class Spam(commands.Cog):
             if spam in mensaje_procesado:
                 # print(f"{spam} encontrado en mensaje")
                 await message.delete()
-                embed=discord.Embed(title="Ese tipo de links están prohibidos. Por favor, comunicate con los administradores para ser desmuteado.", description="Haz click [aquí](https://Gtadictos21.com/discord) para contactarlos.", color=0xff0000)
+                embed=discord.Embed(title=f"El link que acabas de enviar ({spam}) está prohibido. Por favor, comunicate con los administradores para ser desmuteado.", description="Haz click [aquí](https://Gtadictos21.com/discord) para contactarlos.", color=0xff0000)
                 embed.set_footer(text=f"Este es un mensaje automatico, si crees que se envió por error, reportalo.", icon_url=self.bot.user.avatar_url)
                 await message.author.send(message.author.mention, embed=embed)
 
@@ -141,6 +142,7 @@ class Spam(commands.Cog):
                 embed=discord.Embed(title=f" El usuario {message.author} envió un link engañoso y fue muteado automaticamente.", timestamp= datetime.now(), color=0x804000)
                 embed.add_field(name="Mensaje original:", value=message.content, inline=False)
                 embed.set_thumbnail(url=message.author.avatar_url)
+                embed.set_footer(text=f"ID del usuario: {message.author.id}")
                 await channel.send(embed=embed)
                 return
 
@@ -155,7 +157,7 @@ class Spam(commands.Cog):
             return
             
         if arg == None:
-            embed=discord.Embed(title="¡Argumento inválido!", description=f"", color=0x008080)
+            embed=discord.Embed(title="¡Argumento inválido!", description="", color=0x008080)
             embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
             return
@@ -167,7 +169,14 @@ class Spam(commands.Cog):
         
         embed=discord.Embed(title="¡Un nuevo link ha sido agregado a la lista de spam!", description=f"Link agregado: {arg} ", color=0x008080)
         embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
-        await ctx.send(embed=embed)        
+        await ctx.send(embed=embed)
+
+        channel = self.bot.get_channel(logchannel)
+        embed=discord.Embed(title=f"¡El administrador {ctx.author.display_name} agregó un nuevo link a la lista de spam:", description=f"Link agregado: \"{arg}\"", timestamp= datetime.now(), color=0x804000)
+        embed.set_thumbnail(url=ctx.author.avatar_url)
+        embed.set_footer(text=f"ID del usuario: {ctx.author.id}")
+        await channel.send(embed=embed)
+      
 
     @add.error
     async def add_error(self, ctx, error):
