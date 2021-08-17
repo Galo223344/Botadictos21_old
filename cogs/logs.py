@@ -643,6 +643,7 @@ class Logs(commands.Cog):
                 channelnames.append(nameee.name)
             except:
                 pass
+                
         await ctx.send("```Canales ignorados por el bot:\n"+''.join(f"        • {i}\n" for i in channelnames)+"```")
     
     #sugchannel
