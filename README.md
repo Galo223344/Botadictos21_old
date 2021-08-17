@@ -67,4 +67,10 @@ Instalar un entorno Java, descargar y descomprimir OpenJDK 13.0.2, y por ultimo,
 **Nota: Primero se debe ejecutar el servidor de Lavalink (```java -jar Lavalink.jar```), y luego el bot (```python3 launcher.py```), siempre en ese orden.**
 
 
-Ultima actualización: 14/08/2021 por: Julián (Gtadictos21)
+# Proximos proyectos:
+* Añadir SQlite y despreciar JSON.
+* Mejorar configuración de IDs (IDs de guidl y de usuarios)
+* Crear cog de FAQS
+* Y mas...
+
+Ultima actualización: 17/08/2021 por: Julián (Gtadictos21)
