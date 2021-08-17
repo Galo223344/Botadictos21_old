@@ -35,6 +35,9 @@ class Logs(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
+        if message.author.bot:
+            return
+            
         if message.author == self.bot.user:
             return
 
@@ -50,7 +53,10 @@ class Logs(commands.Cog):
         await channel.send(embed=embed)
 
     @commands.Cog.listener()
-    async def on_message_edit(self, before, after):
+    async def on_message_edit(self, before, after):  
+        if before.author.bot:
+            return
+
         if before.author == self.bot.user:
             return
 
@@ -119,6 +125,16 @@ class Logs(commands.Cog):
         channel=self.bot.get_channel(logchannel)
         embed=discord.Embed(title=f"El usuario {user} ha sido baneado del servidor", timestamp= datetime.now(), color=0xff0000)
         embed.add_field(name= "Razón:" ,value=info[0], inline=True)
+        embed.set_thumbnail(url=user.avatar_url)
+        embed.set_footer(text=f"ID del usuario: {user.id}") 
+
+        await channel.send(embed=embed)
+    
+    @commands.Cog.listener()
+    async def on_member_unban(self, guild, user: discord.User):
+
+        channel=self.bot.get_channel(logchannel)
+        embed=discord.Embed(title=f"El usuario {user} ha sido desbaneado del servidor", timestamp= datetime.now(), color=0x2bff00)
         embed.set_thumbnail(url=user.avatar_url)
         embed.set_footer(text=f"ID del usuario: {user.id}") 
 
@@ -304,7 +320,7 @@ class Logs(commands.Cog):
         channel = self.bot.get_channel(logchannel)
 
         if cambiodenick:
-            embed=discord.Embed(title=f"Se ha cambiado el apodo de {before.name}#{before.discriminator}", timestamp= datetime.now(), color=0xff6600)
+            embed=discord.Embed(title=f"Se ha cambiado el apodo de {before.name}#{before.discriminator}", timestamp= datetime.now(), color=0xffff00)
             embed.add_field(name= "Apodo anterior:" ,value=before.nick, inline=False)
             embed.add_field(name= "Apodo nuevo:" ,value=after.nick, inline=False)
             embed.set_footer(text=f"ID del usuario: {before.id}")
@@ -567,7 +583,13 @@ class Logs(commands.Cog):
 
         logchan["logchannel"] = logchannel
 
-        await ctx.send(f"Logchannel cambiado a #{ctx.channel}")
+        await ctx.send(f"Log Channel cambiado a #{ctx.channel}")
+
+        channel=self.bot.get_channel(logchannel)
+        embed=discord.Embed(title=f"Un operador ha cambiado el Log Channel:", description=f"El operador {ctx.author.mention} ha cambiado el Log Channel al canal: #{ctx.channel}", timestamp= datetime.now(), color=0xff7d00)
+        embed.set_thumbnail(url=ctx.author.avatar_url)
+        embed.set_footer(text=f"ID del usuario: {ctx.author.id}")
+        await channel.send(embed=embed)
 
         with open("config.json", "w") as outfile:
             json.dump(logchan, outfile)
@@ -592,6 +614,12 @@ class Logs(commands.Cog):
 
         await ctx.send(f"GVchannel ha sido cambiado al canal #{ctx.channel}")
 
+        channel=self.bot.get_channel(logchannel)
+        embed=discord.Embed(title=f"Un operador ha cambiado el GV Channel:", description=f"El operador {ctx.author.mention} ha cambiado el GV Channel al canal: #{ctx.channel}", timestamp= datetime.now(), color=0xff7d00)
+        embed.set_thumbnail(url=ctx.author.avatar_url)
+        embed.set_footer(text=f"ID del usuario: {ctx.author.id}")
+        await channel.send(embed=embed)
+
         with open("config.json", "w") as outfile:
             json.dump(config, outfile)
 
@@ -609,7 +637,13 @@ class Logs(commands.Cog):
 
         if ctx.channel.id in ignorelist:
             ignorelist.remove(ctx.channel.id)
-            await ctx.send(f"El canal #{ctx.channel} ha sido eliminado de la ignorelist")
+            await ctx.send(f"El canal #{ctx.channel} ha sido eliminado de la Ignorelist")
+
+            channel=self.bot.get_channel(logchannel)
+            embed=discord.Embed(title=f"Un operador ha eliminado un canal de la Ignorelist:", description=f"El operador {ctx.author.mention} ha eliminado el canal: #{ctx.channel} de la Ignorelist", timestamp= datetime.now(), color=0xff7d00)
+            embed.set_thumbnail(url=ctx.author.avatar_url)
+            embed.set_footer(text=f"ID del usuario: {ctx.author.id}")
+            await channel.send(embed=embed)
 
             with open("ignorelist.txt",'w') as ofile:
                 for i in ignorelist:
@@ -620,6 +654,12 @@ class Logs(commands.Cog):
         ignorelist.append(ctx.channel.id)
 
         await ctx.send(f"El canal #{ctx.channel} ha sido agregado a la ignorelist")
+
+        channel=self.bot.get_channel(logchannel)
+        embed=discord.Embed(title=f"Un operador ha agregado un canal a la Ignorelist:", description=f"El operador {ctx.author.mention} ha agregado el canal: #{ctx.channel} a la Ignorelist", timestamp= datetime.now(), color=0xff7d00)
+        embed.set_thumbnail(url=ctx.author.avatar_url)
+        embed.set_footer(text=f"ID del usuario: {ctx.author.id}")
+        await channel.send(embed=embed)
 
         with open("ignorelist.txt",'w') as ofile:
             for i in ignorelist:
@@ -645,6 +685,13 @@ class Logs(commands.Cog):
                 pass
                 
         await ctx.send("```Canales ignorados por el bot:\n"+''.join(f"        • {i}\n" for i in channelnames)+"```")
+
+        channel=self.bot.get_channel(logchannel)
+        embed=discord.Embed(title=f"Un operador ha utilizado el comando `!ignorelist`", description=f"El operador {ctx.author.mention} ha utilizado el comando `!ignorelist`", timestamp= datetime.now(), color=0xff7d00)
+        embed.set_thumbnail(url=ctx.author.avatar_url)
+        embed.set_footer(text=f"ID del usuario: {ctx.author.id}")
+        await channel.send(embed=embed)
+        
     
     #sugchannel
 
@@ -665,6 +712,12 @@ class Logs(commands.Cog):
         config["sugchannel"] = sugchannel
 
         await ctx.send(f"Sugchannel ha sido cambiado al canal #{ctx.channel}")
+
+        channel=self.bot.get_channel(logchannel)
+        embed=discord.Embed(title=f"Un operador ha cambiado el Sug Channel:", description=f"El operador {ctx.author.mention} ha cambiado el Sug Channel al canal: #{ctx.channel}", timestamp= datetime.now(), color=0xff7d00)
+        embed.set_thumbnail(url=ctx.author.avatar_url)
+        embed.set_footer(text=f"ID del usuario: {ctx.author.id}")
+        await channel.send(embed=embed)
 
         with open("config.json", "w") as outfile:
             json.dump(config, outfile)

@@ -244,6 +244,14 @@ class Moderacion(commands.Cog):
                 embed=discord.Embed(title=f"¡El usuario {user.name}#{user.discriminator} ha sido desbaneado!", description="", color=0x008080)
                 embed.set_footer(text=f"Pedido por: {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
                 await ctx.send(embed=embed)
+
+                channel = self.bot.get_channel(logchannel)
+                embed=discord.Embed(title="Un usuario ha sido desbaneado", timestamp= datetime.now(), color=0x2bff00)
+                embed.add_field(name= "Usuario desbaneado:" ,value=user.mention, inline=False)
+                embed.add_field(name= "Desbaneado por:" ,value=ctx.message.author.mention, inline=False)
+                embed.set_thumbnail(url=user.avatar_url)
+                embed.set_footer(text=f"ID del usuario: {user.id}")
+                await channel.send(embed=embed)
                 return
 
         embed=discord.Embed(title="¡Usuario no baneado / Usuario no encontrado!", description="", color=0xff0000)
