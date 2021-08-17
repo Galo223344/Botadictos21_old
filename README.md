@@ -24,12 +24,12 @@ python3 Botadictos21.py
 
 ### Configuraciones:
 
-1. Crear un archivo **.env** de la siguiente manera: DISCORD_TOKEN = "TU_TOKEN_DE_DISCORD_VA_AQUÍ"
-2. Cambiar **admin_ids** por por los IDs de las personas que querés que controlen el bot.
+1. Crear un archivo **.env** de la siguiente manera: `DISCORD_TOKEN = "TU_TOKEN_DE_DISCORD_VA_AQUÍ"`
+2. Cambiar **admin_ids** por los IDs de las personas que querés que controlen el bot.
 3. Cambiar los emojis customizados por tuyos o unos no customizados en los cogs.
-4. Agregar tu propia clave API de youtube en YTconfig.yml (Las instrucciónes para conseguír esta clave están en el repositorio original, o simplemente podés borrar todo lo relacionado a YouTube.)
-5. Cambiar el ID de la guild por el ID de TU servidor en Botadictos21.py, y en los cogs.
-6. Agregar tu clave API (en el archivo .env) o eliminar el modulo de Pterodactyl en Misc.py.
+4. Agregar tu propia clave API de youtube en **YTconfig.yml** (Las instrucciónes para conseguír esta clave están en el repositorio original, o simplemente podés borrar todo lo relacionado a YouTube.)
+5. Cambiar el ID de la guild por el ID de TU servidor en **Botadictos21.py**, y en los cogs.
+6. Agregar tu clave API (en el archivo **.env**) o eliminar el modulo de Pterodactyl en **Misc.py**.
 7. Utilizando los comandos "!sugchannel", "!logchannel", "!gvchannel" y "!init" deberás configurar tu servidor.
 
 # Musicadictos21:
