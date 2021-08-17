@@ -68,7 +68,7 @@ Instalar un entorno Java, descargar y descomprimir OpenJDK 13.0.2, y por ultimo,
 
 
 # Proximos proyectos:
-* Añadir SQlite y despreciar JSON.
+* Añadir SQLite y despreciar JSON.
 * Mejorar configuración de IDs (IDs de guidl y de usuarios)
 * Crear cog de FAQS
 * Y mas...
