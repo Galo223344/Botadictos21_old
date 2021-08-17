@@ -1,16 +1,26 @@
 import os
 import random
 import json
-
-from discord.ext import commands
+import math
 import discord
-from dotenv import load_dotenv
 import time
 import asyncio
+
+from discord.ext import commands
+from dotenv import load_dotenv
+from datetime import datetime
+from pydactyl import PterodactylClient
+
+# Abrimos el archivo config.json para saber el ID del logchannel
+with open('config.json', 'r') as f:
+    configjson = json.load(f)
+    global logchannel
+    logchannel = configjson["logchannel"]
 
 # Cargamos el .env con los tokens
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+API_TOKEN = os.getenv('API_TOKEN')
 
 # Forzamos la zona de tiempo a argentina
 os.environ['TZ'] = 'America/Argentina/Buenos_Aires'
@@ -29,6 +39,7 @@ bot.remove_command('help')
 global admin_ids
 admin_ids = [503739646895718401, 388924384016072706]
 
+# Empieza un loop con distintos status
 @bot.event    
 async def status_task():
 	while True:
@@ -45,11 +56,26 @@ async def status_task():
 # Inicia el loop y avisa que el bot se conectó		
 @bot.event      
 async def on_ready():
-	...
-	bot.loop.create_task(status_task())
-	guild = bot.get_guild(750491736349999154) # ID del servidor de Gtadictos21	
-	print(f'¡{bot.user.name} se ha conectado!¡Este servidor tiene {len(guild.members)} usuarios!')
+    ...
+    bot.loop.create_task(status_task())
+    guild = bot.get_guild(750491736349999154) # ID del servidor de Gtadictos21	
+    print(f'¡{bot.user.name} se ha conectado!¡Este servidor tiene {len(guild.members)} usuarios!')
 
+    # Envia embed para avisar que el bot está activo, junto con algunos datos como uso de CPU, RAM, disco y ID de los operadores
+    channel = bot.get_channel(853846800427384852) # ID del canal donde envia el mensaje	
+    client = PterodactylClient('https://control.sparkedhost.us/', API_TOKEN).client
+    srv_id = '17686b27'
+    utils = []
+    utils.append(client.get_server_utilization(srv_id)['resources'])
+
+    for util in utils:
+        embed=discord.Embed(title=f"¡{bot.user.name} se ha conectado!", description=f"¡Este servidor tiene {len(guild.members)} usuarios!", timestamp= datetime.now(), color=0x2bff00)
+        embed.add_field(name="ID de los operadores:", value=f"{admin_ids}", inline=False)
+        embed.add_field(name="**CPU:**", value=f"{util['cpu_absolute']}%/60%", inline=True)
+        embed.add_field(name="**Memoria en uso:**", value=f"{math.ceil((util['memory_bytes']/1024)/1024)}MB/512MB", inline=True)
+        embed.add_field(name="**Espacio en uso:**", value=f"{math.ceil((util['disk_bytes']/1024)/1024)}MB/10GB", inline=True)
+        embed.set_thumbnail(url=bot.user.avatar_url)
+    await channel.send(embed=embed)
 
 print(os.path.exists('recordatorios.json'))
 
@@ -88,6 +114,12 @@ async def load(ctx, extension):
     bot.load_extension(f"cogs.{extension}")
     await ctx.send(f"La extension cogs.**{extension}** ha sido cargada")
 
+    channel=bot.get_channel(logchannel)
+    embed=discord.Embed(title=f"Un operador ha cargado una extensión:", description=f"El operador {ctx.author.mention} ha cargado el cog **{extension}**", timestamp= datetime.now(), color=0xff7d00)
+    embed.set_thumbnail(url=ctx.author.avatar_url)
+    embed.set_footer(text=f"ID del usuario: {ctx.author.id}")
+    await channel.send(embed=embed)
+
 @bot.command()
 async def unload(ctx, extension):
     if ctx.author.id not in admin_ids:
@@ -100,8 +132,14 @@ async def unload(ctx, extension):
     bot.unload_extension(f"cogs.{extension}")
     await ctx.send(f"La extension cogs.**{extension}** ha sido descargada")
 
+    channel=bot.get_channel(logchannel)
+    embed=discord.Embed(title=f"Un operador ha descargado una extensión:", description=f"El operador {ctx.author.mention} ha descargado el cog **{extension}**", timestamp= datetime.now(), color=0xff7d00)
+    embed.set_thumbnail(url=ctx.author.avatar_url)
+    embed.set_footer(text=f"ID del usuario: {ctx.author.id}")
+    await channel.send(embed=embed)
+
 @bot.command()
-async def reload(ctx,extension):
+async def reload(ctx, extension):
     if ctx.author.id not in admin_ids:
         # Si el que pide el comando no es un Admin, aparece el error
         embed=discord.Embed(title="¡No tienes permisos para utilizar este comando!", description="Necesitas contar con el permiso `BOT_OPERATOR`", color=0xff0000)
@@ -120,12 +158,23 @@ async def reload(ctx,extension):
                 bot.load_extension(f"cogs.{filename[:-3]}")
 
         await ctx.send("¡Todas las extensiones han sido recargadas!")
+
+        channel=bot.get_channel(logchannel)
+        embed=discord.Embed(title=f"Un operador ha recargado todas las extensiones", description=f"El operador {ctx.author.mention} ha recargado todas las extensiones", timestamp= datetime.now(), color=0xff7d00)
+        embed.set_thumbnail(url=ctx.author.avatar_url)
+        embed.set_footer(text=f"ID del usuario: {ctx.author.id}") 
+        await channel.send(embed=embed)
         return
     # Descargamos y cargamos la extension especifica
-
     bot.unload_extension(f"cogs.{extension}")
     bot.load_extension(f"cogs.{extension}")
     await ctx.send(f"La extension cogs.**{extension}** ha sido recargada")
+
+    channel=bot.get_channel(logchannel)
+    embed=discord.Embed(title=f"Un operador ha recargado una extensión:", description=f"El operador {ctx.author.mention} ha recargado el cog **{extension}**", timestamp= datetime.now(), color=0xff7d00)
+    embed.set_thumbnail(url=ctx.author.avatar_url)
+    embed.set_footer(text=f"ID del usuario: {ctx.author.id}")
+    await channel.send(embed=embed)
 
 # Cargamos todos los archivos adentro de cogs / como extensiones
 for filename in os.listdir('./cogs'):
