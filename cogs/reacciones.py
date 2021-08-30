@@ -167,10 +167,10 @@ class Reactions(commands.Cog):
 
         tadaa = self.bot.get_emoji(784983720226193428)
 
-        embed=discord.Embed(title="¡Nuevo sorteo!", description=f"Creado por: {ctx.message.author.mention}")
-        embed.add_field(name=str(nombre), value=str(desc), inline=False)
+        embed=discord.Embed(title=str(nombre), description=str(desc), color=0x2cdca3)
         embed.add_field(name="Cantidad de ganadores:", value=cant_ganadores, inline=False)
-        embed.set_footer(text=f"Finaliza el dia: {tiempo_formateado}, reacciona con 🎉 para entrar!")
+        embed.add_field(name="Creador por:", value=f"{ctx.message.author.mention}", inline=False)
+        embed.set_footer(text=f"Finaliza el dia: {tiempo_formateado}, ¡reacciona con 🎉 para entrar!")
 
         channel=self.bot.get_channel(gvchannel)
         message = await channel.send("@everyone ¡Nuevo sorteo!", embed=embed)
